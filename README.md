@@ -31,6 +31,9 @@
 21. [action_types](#action-types)
 22. [default_first_actions](#default-first-actions)
 
+<img width="15861" height="13627" alt="image" src="https://github.com/user-attachments/assets/34aed034-4966-4582-8f74-626cd7543f6c" />
+
+
 ---
 
 ## applications
