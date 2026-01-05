@@ -1,0 +1,1620 @@
+openapi: 3.0.0
+info: {title: API Documentation, version: 1.0.0}
+servers:
+- {url: 'https://dev-tag.tascombank.ua/api/tas', description: Server}
+paths:
+  /documents/{id}:
+    put:
+      summary: Update Document
+      tags: [API/Documents]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type: {default: '', description: '', type: string}
+                status: {default: '', description: '', type: string}
+                channel: {default: '', description: '', type: string}
+                source: {default: '', description: '', type: string}
+                owner: {default: '', description: '', type: object}
+                signature:
+                  default: ''
+                  description: ''
+                  type: array
+                  items: {type: string}
+                data: {default: '', description: '', type: object}
+                is_primary: {default: '', description: '', type: boolean}
+        required: true
+      responses:
+        '200': {description: Successful response}
+    delete:
+      summary: Delete Document
+      tags: [API/Documents]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    get:
+      summary: Get Document by ID
+      tags: [API/Documents]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+  /action_types:
+    get:
+      summary: Get Action Types
+      tags: [API/Applications]
+      parameters:
+      - name: type_id
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: skill_group_id
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+  /applications/stats:
+    get:
+      summary: Applications Stats
+      tags: [API/Applications]
+      parameters:
+      - name: type_id
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: status_id
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: priority_id
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: ekb_client_id
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: client_tax_id
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: created_from
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: created_to
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: client_name
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: assigned_to_group
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: required_action
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: limit
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: offset
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+  /applications:
+    post:
+      summary: Create Application
+      tags: [API/Applications]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type_id: {default: '', description: '', type: string}
+                status_id: {default: '', description: '', type: string}
+                priority_id: {default: '', description: '', type: string}
+                ekb_client_id: {default: '', description: '', type: string}
+                client_name: {default: '', description: '', type: string}
+                client_tax_id: {default: '', description: '', type: string}
+                client_phone: {default: '', description: '', type: string}
+              required: [type_id, status_id, priority_id, ekb_client_id]
+        required: true
+      responses:
+        '200': {description: Successful response}
+    get:
+      summary: List Applications
+      tags: [API/Applications]
+      parameters:
+      - name: type_id
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: status_id
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: priority_id
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: ekb_client_id
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: client_tax_id
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: created_from
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: created_to
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: limit
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: offset
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: client_name
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: assigned_to_group
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: required_action
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: application_number
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+  /applications/{id}:
+    get:
+      summary: Get Application By ID
+      tags: [API/Applications]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    delete:
+      summary: Delete Application
+      tags: [API/Applications]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    put:
+      summary: Update Application By ID
+      tags: [API/Applications]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type_id: {default: '', description: '', type: string}
+                status_id: {default: '', description: '', type: string}
+                priority_id: {default: '', description: '', type: string}
+                ekb_client_id: {default: '', description: '', type: string}
+                client_name: {default: '', description: '', type: string}
+                client_tax_id: {default: '', description: '', type: string}
+                client_phone: {default: '', description: '', type: string}
+        required: true
+      responses:
+        '200': {description: Successful response}
+  /companies:
+    post:
+      summary: Create Company
+      tags: [API/Companies]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: {default: '', description: '', type: string}
+                status: {default: '', description: '', type: string}
+              required: [name]
+        required: true
+      responses:
+        '200': {description: Successful response}
+    get:
+      summary: List Companies
+      tags: [API/Companies]
+      responses:
+        '200': {description: Successful response}
+  /clients/{client_id}/addresses:
+    post:
+      summary: Create Address
+      tags: [API/Addresses]
+      parameters:
+      - name: client_id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type: {default: '', description: '', type: string}
+                is_primary: {default: false, description: '', type: boolean}
+                used_for:
+                  default: '[]'
+                  description: ''
+                  type: array
+                  items: {type: string}
+                status: {default: '', description: '', type: string}
+                description: {default: '', description: '', type: string}
+                source: {default: '', description: '', type: string}
+                country: {default: '{}', description: '', type: object}
+                region: {default: '{}', description: '', type: object}
+                city: {default: '{}', description: '', type: object}
+                district: {default: '{}', description: '', type: object}
+                street: {default: '{}', description: '', type: object}
+                building: {default: '{}', description: '', type: object}
+                apartment: {default: '', description: '', type: string}
+                postal_code: {default: '', description: '', type: string}
+                location: {default: '{}', description: '', type: object}
+                valid: {default: '{}', description: '', type: object}
+                data: {default: '{}', description: '', type: object}
+                external_type_id: {default: '', description: '', type: string}
+        required: true
+      responses:
+        '200': {description: Successful response}
+    get:
+      summary: Get Client Address
+      tags: [API/Addresses]
+      parameters:
+      - name: client_id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+  /clients_empty:
+    post:
+      summary: Create empty client
+      tags: [API/Clients]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status: {default: '', description: '', type: string}
+                company_status: {default: '', description: '', type: string}
+                company_id: {default: '', description: '', type: string}
+              required: [status, company_status, company_id]
+        required: true
+      responses:
+        '200': {description: Successful response}
+  /clients/{client_id}/events:
+    post:
+      summary: Create Event
+      tags: [API/Events]
+      parameters:
+      - name: client_id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                external_id: {default: undefined, description: '', type: string}
+                direction: {default: undefined, description: '', type: string}
+                type: {default: '', description: '', type: object}
+                category: {default: undefined, description: '', type: string}
+                status: {default: undefined, description: '', type: string}
+                description: {default: undefined, description: '', type: string}
+                channel: {default: '', description: '', type: object}
+                data: {default: '', description: '', type: object}
+                notification_settings: {default: '{}', description: '', type: object}
+        required: true
+      responses:
+        '200': {description: Successful response}
+    get:
+      summary: List Events
+      tags: [API/Events]
+      parameters:
+      - name: client_id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+  /contacts/{contact_id}:
+    put:
+      summary: Update Contact
+      tags: [API/Contacts]
+      parameters:
+      - name: contact_id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type: {default: '', description: '', type: string}
+                value: {default: '', description: '', type: string}
+                subtype: {default: '', description: '', type: string}
+                status: {default: '', description: '', type: string}
+                name: {default: '', description: '', type: string}
+                description: {default: '', description: '', type: string}
+                is_primary: {default: '', description: '', type: boolean}
+                is_verified: {default: '', description: '', type: boolean}
+                flags:
+                  default: ''
+                  description: ''
+                  type: array
+                  items: {type: string}
+                external_type_id: {default: '', description: '', type: string}
+        required: true
+      responses:
+        '200': {description: Successful response}
+    get:
+      summary: Get Contact
+      tags: [API/Contacts]
+      parameters:
+      - name: contact_id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    delete:
+      summary: Delete Contact
+      tags: [API/Contacts]
+      parameters:
+      - name: contact_id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+  /clients:
+    get:
+      summary: List Clients
+      tags: [API/Clients]
+      parameters:
+      - name: last_name
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: first_name
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: middle_name
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: phone
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: inn
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: passport
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: birth_date
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: status
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: sort_by
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: sort_order
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: limit
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: offset
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: name_words
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: full_name
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    post:
+      summary: Create Client
+      tags: [API/Clients]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                profile: {default: '', description: '', type: object}
+                status: {default: '', description: '', type: string}
+                company_status: {default: '', description: '', type: string}
+                data: {default: '', description: '', type: object}
+              required: [profile, status, company_status]
+        required: true
+      responses:
+        '200': {description: Successful response}
+  /clients/{id}:
+    delete:
+      summary: Delete client
+      tags: [API/Clients]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    get:
+      summary: Get Client by ID
+      tags: [API/Clients]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    put:
+      summary: Update Client
+      tags: [API/Clients]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                profile: {default: '{}', description: '', type: object}
+                status: {default: '', description: '', type: string}
+                data: {default: '{}', description: '', type: object}
+                company_status: {default: '', description: '', type: string}
+        required: true
+      responses:
+        '200': {description: Successful response}
+  /orders/{id}:
+    get:
+      summary: Get Order By ID
+      tags: [API/Applications]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    delete:
+      summary: Delete Order
+      tags: [API/Applications]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    put:
+      summary: Update Order By ID
+      tags: [API/Applications]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                skill_group_id: {default: '', description: '', type: string}
+                decision_id: {default: '', description: '', type: string}
+                assigned_to: {default: '', description: '', type: string}
+                assigned_to_name: {default: '', description: '', type: string}
+                status: {default: '', description: '', type: string}
+                comment: {default: '', description: '', type: string}
+                completed_at: {default: '', description: '', type: string}
+        required: true
+      responses:
+        '200': {description: Successful response}
+  /application_types:
+    get:
+      summary: Get All Application Types
+      tags: [API/Applications]
+      responses:
+        '200': {description: Successful response}
+    post:
+      summary: Create Application Type
+      tags: [API/Applications]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code: {default: '', description: '', type: string}
+                name: {default: '', description: '', type: string}
+                description: {default: '', description: '', type: string}
+                is_active: {default: true, description: '', type: boolean}
+                sort_order: {default: 0.0, description: '', type: number}
+              required: [code, name]
+        required: true
+      responses:
+        '200': {description: Successful response}
+  /skill_groups/{id}:
+    delete:
+      summary: Delete Skill Group
+      tags: [API/Applications]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    get:
+      summary: Get Skill Group By ID
+      tags: [API/Applications]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    put:
+      summary: Update Skill Group
+      tags: [API/Applications]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code: {default: '', description: '', type: string}
+                name: {default: '', description: '', type: string}
+                is_active: {default: '', description: '', type: boolean}
+                sort_order: {default: '', description: '', type: number}
+        required: true
+      responses:
+        '200': {description: Successful response}
+  /skill_groups:
+    get:
+      summary: Get All Skill Groups
+      tags: [API/Applications]
+      responses:
+        '200': {description: Successful response}
+    post:
+      summary: Create Skill Group
+      tags: [API/Applications]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code: {default: '', description: '', type: string}
+                name: {default: '', description: '', type: string}
+                is_active: {default: true, description: '', type: boolean}
+                sort_order: {default: 0.0, description: '', type: number}
+              required: [code, name]
+        required: true
+      responses:
+        '200': {description: Successful response}
+  /application_priorities/{id}:
+    delete:
+      summary: Delete Application Priority
+      tags: [API/Applications]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    put:
+      summary: Update Application Priority
+      tags: [API/Applications]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code: {default: '', description: '', type: string}
+                name: {default: '', description: '', type: string}
+                sort_order: {default: '', description: '', type: number}
+                is_active: {default: '', description: '', type: boolean}
+        required: true
+      responses:
+        '200': {description: Successful response}
+  /application_priorities:
+    get:
+      summary: Get Application Priorities
+      tags: [API/Applications]
+      responses:
+        '200': {description: Successful response}
+    post:
+      summary: Create Application Priority
+      tags: [API/Applications]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code: {default: '', description: '', type: string}
+                name: {default: '', description: '', type: string}
+                sort_order: {default: 0.0, description: '', type: number}
+                is_active: {default: true, description: '', type: boolean}
+              required: [code, name]
+        required: true
+      responses:
+        '200': {description: Successful response}
+  /application_statuses/{id}:
+    delete:
+      summary: Delete Application Status
+      tags: [API/Applications]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    put:
+      summary: Update Application Status
+      tags: [API/Applications]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code: {default: '', description: '', type: string}
+                name: {default: '', description: '', type: string}
+                color: {default: '', description: '', type: object}
+                is_final: {default: '', description: '', type: boolean}
+                is_active: {default: '', description: '', type: boolean}
+                sort_order: {default: '', description: '', type: number}
+        required: true
+      responses:
+        '200': {description: Successful response}
+  /application_statuses:
+    get:
+      summary: Get Application Statuses
+      tags: [API/Applications]
+      responses:
+        '200': {description: Successful response}
+    post:
+      summary: Create Application Status
+      tags: [API/Applications]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code: {default: '', description: '', type: string}
+                name: {default: '', description: '', type: string}
+                color: {default: '', description: '', type: object}
+                is_final: {default: false, description: '', type: boolean}
+                is_active: {default: true, description: '', type: boolean}
+                sort_order: {default: 0.0, description: '', type: number}
+              required: [code, name]
+        required: true
+      responses:
+        '200': {description: Successful response}
+  /application_types/{id}:
+    delete:
+      summary: Delete Application Type
+      tags: [API/Applications]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    put:
+      summary: Update Application Type
+      tags: [API/Applications]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code: {default: '', description: '', type: string}
+                name: {default: '', description: '', type: string}
+                description: {default: '', description: '', type: string}
+                is_active: {default: '', description: '', type: boolean}
+                sort_order: {default: '', description: '', type: number}
+        required: true
+      responses:
+        '200': {description: Successful response}
+  /order_decisions:
+    get:
+      summary: Get All Order Decisions
+      tags: [API/Applications]
+      responses:
+        '200': {description: Successful response}
+    post:
+      summary: Create Order Decision
+      tags: [API/Applications]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                skill_group_id: {default: '', description: '', type: string}
+                code: {default: '', description: '', type: string}
+                name: {default: '', description: '', type: string}
+                creates_order_for: {default: '', description: '', type: string}
+                finalizes_application: {default: false, description: '', type: boolean}
+                is_rejection: {default: false, description: '', type: boolean}
+                is_active: {default: true, description: '', type: boolean}
+                sort_order: {default: 0.0, description: '', type: number}
+              required: [skill_group_id, code, name]
+        required: true
+      responses:
+        '200': {description: Successful response}
+  /clients/{client_id}/relationships:
+    post:
+      summary: Create Relationship
+      tags: [API/Relationships]
+      parameters:
+      - name: client_id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status: {default: '', description: '', type: string}
+                related_entity: {default: '', description: '', type: object}
+                relation_type: {default: '', description: '', type: object}
+                valid: {default: '', description: '', type: object}
+              required: [related_entity, relation_type]
+        required: true
+      responses:
+        '200': {description: Successful response}
+    get:
+      summary: List Relationships
+      tags: [API/Relationships]
+      parameters:
+      - name: client_id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+  /users_update/{id}:
+    put:
+      summary: Clients update new
+      tags: [API/Clients]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                profile: {default: '{}', description: '', type: object}
+                status: {default: '', description: '', type: string}
+                data: {default: '{}', description: '', type: object}
+                company_status: {default: '', description: '', type: string}
+        required: true
+      responses:
+        '200': {description: Successful response}
+  /events/{id}:
+    put:
+      summary: Update Event
+      tags: [API/Events]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                external_id: {default: '', description: '', type: string}
+                direction: {default: '', description: '', type: string}
+                type: {default: '', description: '', type: object}
+                category: {default: '', description: '', type: string}
+                status: {default: '', description: '', type: string}
+                description: {default: '', description: '', type: string}
+                channel: {default: '', description: '', type: object}
+                data: {default: '', description: '', type: object}
+                read: {default: false, description: '', type: boolean}
+        required: true
+      responses:
+        '200': {description: Successful response}
+    get:
+      summary: Get Event by ID
+      tags: [API/Events]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    delete:
+      summary: Delete Event
+      tags: [API/Events]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+  /audit-logs:
+    get:
+      summary: List Audit Log Entries
+      tags: [API/Audit Log]
+      parameters:
+      - name: client_id
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: company_client_id
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: actor_id
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: action
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: target_table
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    post:
+      summary: Create Audit Log Entry
+      tags: [API/Audit Log]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client_id: {default: '', description: '', type: string}
+                actor_id: {default: '', description: '', type: string}
+                actor_type: {default: '', description: '', type: string}
+                action: {default: '', description: '', type: string}
+                target_table: {default: '', description: '', type: string}
+                field_name: {default: '', description: '', type: string}
+                old_value: {default: '', description: '', type: string}
+                new_value: {default: '', description: '', type: string}
+                data: {default: '', description: '', type: object}
+                source_ip: {default: '', description: '', type: string}
+                user_agent: {default: '', description: '', type: string}
+                comment: {default: '', description: '', type: string}
+                transaction_id: {default: '', description: '', type: string}
+                severity: {default: '', description: '', type: string}
+        required: true
+      responses:
+        '200': {description: Successful response}
+  /clients/{client_id}/contacts:
+    get:
+      summary: Get Client Contacts
+      tags: [API/Contacts]
+      parameters:
+      - name: client_id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    post:
+      summary: Create Contact
+      tags: [API/Contacts]
+      parameters:
+      - name: client_id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type: {default: '', description: '', type: string}
+                value: {default: '', description: '', type: string}
+                subtype: {default: '', description: '', type: string}
+                status: {default: '', description: '', type: string}
+                name: {default: '', description: '', type: string}
+                description: {default: '', description: '', type: string}
+                is_primary: {default: '', description: '', type: boolean}
+                is_verified: {default: '', description: '', type: boolean}
+                flags:
+                  default: ''
+                  description: ''
+                  type: array
+                  items: {type: string}
+                external_type_id: {default: '', description: '', type: string}
+              required: [type, value]
+        required: true
+      responses:
+        '200': {description: Successful response}
+  /files/{id}:
+    delete:
+      summary: Delete File
+      tags: [API/Document Files]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    get:
+      summary: Get File by ID
+      tags: [API/Document Files]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+  /addresses/{address_id}:
+    get:
+      summary: Get Address
+      tags: [API/Addresses]
+      parameters:
+      - name: address_id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    delete:
+      summary: Delete Address
+      tags: [API/Addresses]
+      parameters:
+      - name: address_id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    put:
+      summary: Update Address
+      tags: [API/Addresses]
+      parameters:
+      - name: address_id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type: {default: '', description: '', type: string}
+                is_primary: {default: false, description: '', type: boolean}
+                used_for:
+                  default: ''
+                  description: ''
+                  type: array
+                  items: {type: string}
+                status: {default: '', description: '', type: string}
+                description: {default: '', description: '', type: string}
+                source: {default: '', description: '', type: string}
+                country: {default: '', description: '', type: object}
+                region: {default: '', description: '', type: object}
+                city: {default: '', description: '', type: object}
+                district: {default: '', description: '', type: object}
+                street: {default: '', description: '', type: object}
+                building: {default: '', description: '', type: object}
+                apartment: {default: '', description: '', type: string}
+                postal_code: {default: '', description: '', type: string}
+                location: {default: '', description: '', type: object}
+                valid: {default: '', description: '', type: object}
+                data: {default: '', description: '', type: object}
+                external_type_id: {default: '', description: '', type: string}
+        required: true
+      responses:
+        '200': {description: Successful response}
+  /relationships/{id}:
+    delete:
+      summary: Delete Relationship
+      tags: [API/Relationships]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    get:
+      summary: Get Relationship by ID
+      tags: [API/Relationships]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    put:
+      summary: Update Relationship
+      tags: [API/Relationships]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status: {default: '', description: '', type: string}
+                related_entity: {default: '', description: '', type: object}
+                relation_type: {default: '', description: '', type: object}
+                valid: {default: '', description: '', type: object}
+        required: true
+      responses:
+        '200': {description: Successful response}
+  /clients/{client_id}/companies:
+    put:
+      summary: Update Company-Client Link
+      tags: [API/Company-Clients]
+      parameters:
+      - name: client_id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                external_id: {default: '', description: '', type: string}
+                status: {default: '', description: '', type: string}
+                data: {default: '', description: '', type: object}
+        required: true
+      responses:
+        '200': {description: Successful response}
+    delete:
+      summary: Delete Company-Client Link
+      tags: [API/Company-Clients]
+      parameters:
+      - name: client_id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    get:
+      summary: GET Company-Client Link
+      tags: [API/Company-Clients]
+      parameters:
+      - name: client_id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    post:
+      summary: Link Client to Company
+      tags: [API/Company-Clients]
+      parameters:
+      - name: client_id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                external_id: {default: undefined, description: '', type: string}
+                status: {default: undefined, description: '', type: string}
+                data: {default: '', description: '', type: object}
+        required: true
+      responses:
+        '200': {description: Successful response}
+  /clients/{client_id}/documents:
+    post:
+      summary: Create Document
+      tags: [API/Documents]
+      parameters:
+      - name: client_id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type: {default: '', description: '', type: string}
+                status: {default: '', description: '', type: string}
+                channel: {default: '', description: '', type: string}
+                source: {default: '', description: '', type: string}
+                owner: {default: '', description: '{}', type: object}
+                signature:
+                  default: ''
+                  description: '[]'
+                  type: array
+                  items: {type: string}
+                data: {default: '', description: '{}', type: object}
+                is_primary: {default: '', description: 'true', type: boolean}
+              required: [type]
+        required: true
+      responses:
+        '200': {description: Successful response}
+    get:
+      summary: List Documents
+      tags: [API/Documents]
+      parameters:
+      - name: client_id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      - name: type
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+  /companies/{id}:
+    delete:
+      summary: Delete Company
+      tags: [API/Companies]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    get:
+      summary: Get Company by ID
+      tags: [API/Companies]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+    put:
+      summary: Update Company
+      tags: [API/Companies]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: {default: '', description: '', type: string}
+                status: {default: '', description: '', type: string}
+        required: true
+      responses:
+        '200': {description: Successful response}
+  /documents/{documentId}/files:
+    post:
+      summary: Upload Document File
+      tags: [API/Document Files]
+      parameters:
+      - name: documentId
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: {default: undefined, description: '', type: string}
+                size: {default: '', description: '', type: number}
+                mime_type: {default: undefined, description: '', type: string}
+                storage_url: {default: undefined, description: '', type: string}
+                hash: {default: '', description: '', type: object}
+              required: [name, size, mime_type, storage_url]
+        required: true
+      responses:
+        '200': {description: Successful response}
+    get:
+      summary: List Document Files
+      tags: [API/Document Files]
+      parameters:
+      - name: documentId
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+  /orders:
+    post:
+      summary: Create Order
+      tags: [API/Applications]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                application_id: {default: '', description: '', type: string}
+                skill_group_id: {default: '', description: '', type: string}
+                decision_id: {default: '', description: '', type: string}
+                assigned_to: {default: '', description: '', type: string}
+                assigned_to_name: {default: '', description: '', type: string}
+                status: {default: pending, description: '', type: string}
+                comment: {default: '', description: '', type: string}
+              required: [application_id, skill_group_id]
+        required: true
+      responses:
+        '200': {description: Successful response}
+    get:
+      summary: List Orders
+      tags: [API/Applications]
+      parameters:
+      - name: application_id
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: skill_group_id
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: decision_id
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: status
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: assigned_to
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: created_from
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: created_to
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: limit
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: offset
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+  /order_decisions/{id}:
+    get:
+      summary: Get Order Decision By ID
+      tags: [API/Applications]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
+  /clients_test:
+    get:
+      summary: List Clients(copy)
+      tags: [API/Clients]
+      parameters:
+      - name: last_name
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: first_name
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: middle_name
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: phone
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: inn
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: passport
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: birth_date
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: status
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: sort_by
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: sort_order
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: limit
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: offset
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: name_words
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: full_name
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      responses:
+        '200': {description: Successful response}
