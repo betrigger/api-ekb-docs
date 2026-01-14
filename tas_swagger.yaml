@@ -6,6 +6,7 @@ paths:
   /documents/{id}:
     put:
       summary: Update Document
+      description: Оновлює існуючий документ клієнта за його ID. Дозволяє змінити тип, статус, канал, джерело, власника, підписи та додаткові дані документа. Використовується для зміни статусу верифікації документа або оновлення його метаданих.
       tags: [API/Documents]
       parameters:
       - name: id
@@ -33,9 +34,76 @@ paths:
                 is_primary: {default: '', description: '', type: boolean}
         required: true
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: {type: string, format: uuid}
+                  owner: {type: object}
+                  data: {type: object}
+                  is_primary: {type: boolean}
+                  signature: {type: array, items: {type: object}}
+                  channel: {type: string}
+                  created_at: {type: string, format: date-time}
+                  source: {type: string}
+                  type: {type: string}
+                  updated_at: {type: string, format: date-time}
+                  company_client_id: {type: string, format: uuid}
+                  status: {type: string}
+              example:
+                id: "6aa72d48-c026-4a7a-b86b-3703d9cea8d2"
+                owner:
+                  id: "545962e5-4f87-4d44-8fa7-6fd5be278d1d"
+                  type: "client"
+                data:
+                  tags: ["passport", "national_id", "ukraine"]
+                  number: "001234567"
+                  series: ""
+                  issued_at: "2020-03-15"
+                  issued_by: "1355"
+                  description: "Паспорт громадянина України (ID-карта з Дії)"
+                  valid_until: "2030-03-15"
+                  additional_data:
+                    birthday: "1990-05-12"
+                    file_name: "internal-passport-uuid-example.pdf.p7s.p7e"
+                    gender_en: "F"
+                    gender_ua: "Ж"
+                    type_info:
+                      id: 29
+                      name: "Паспорт громадянина України (ID-карта)"
+                    last_name_en: "Kovalenko"
+                    last_name_ua: "Коваленко"
+                    residence_ua: "УКРАЇНА М. КИЇВ ВУЛ. ХРЕЩАТИК БУД. 15 КВ. 42.\nДата реєстрації: 15.08.2010"
+                    first_name_en: "Olena"
+                    first_name_ua: "Олена"
+                    record_number: "19900512-01234"
+                    birth_place_ua: "М. КИЇВ КИЇВСЬКА ОБЛАСТЬ УКРАЇНА"
+                    middle_name_ua: "Петрівна"
+                    nationality_ua: "Україна"
+                    taxpayer_number: "1234567890"
+                    issue_country_code: "UA"
+                    issue_department_code: "1355"
+                    residence_country_code: "UA"
+                  linked_documents: []
+                is_primary: true
+                signature:
+                  - type: "e-signature"
+                    client_id: "545962e5-4f87-4d44-8fa7-6fd5be278d1d"
+                    signed_at: "2026-01-13T17:48:24.579Z"
+                    signed_by: "client"
+                channel: "dia"
+                created_at: "2026-01-13T17:48:25.167268Z"
+                source: "client"
+                type: "passport"
+                updated_at: "2026-01-14T10:30:00.000000Z"
+                company_client_id: "256f6004-2b6d-442c-8c27-aa59f14fd523"
+                status: "verified"
     delete:
       summary: Delete Document
+      description: Видаляє документ клієнта за його ID. Операція незворотна. Використовується для видалення застарілих, недійсних або помилково створених документів.
       tags: [API/Documents]
       parameters:
       - name: id
@@ -47,6 +115,7 @@ paths:
         '200': {description: Successful response}
     get:
       summary: Get Document by ID
+      description: Отримує повну інформацію про документ за його унікальним ідентифікатором. Повертає масив з одним об'єктом документа, що містить всі дані включно з власником, підписами, каналом створення та додатковими атрибутами.
       tags: [API/Documents]
       parameters:
       - name: id
@@ -55,7 +124,75 @@ paths:
         required: true
         schema: {type: string}
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    owner: {type: object}
+                    data: {type: object}
+                    is_primary: {type: boolean}
+                    signature: {type: array, items: {type: object}}
+                    channel: {type: string}
+                    created_at: {type: string, format: date-time}
+                    source: {type: string}
+                    type: {type: string}
+                    updated_at: {type: string, format: date-time}
+                    company_client_id: {type: string, format: uuid}
+                    status: {type: string}
+              example:
+                - id: "e6914bed-343c-4e09-ad7f-d499931c256a"
+                  owner:
+                    id: "d56f0b25-115f-4e22-9069-a257ac8bdea2"
+                    type: "client"
+                  data:
+                    tags: ["passport", "national_id", "ukraine"]
+                    number: "001234567"
+                    series: ""
+                    issued_at: "2020-03-15"
+                    issued_by: "1355"
+                    description: "Паспорт громадянина України (ID-карта з Дії)"
+                    valid_until: "2030-03-15"
+                    additional_data:
+                      birthday: "1990-05-12"
+                      file_name: "internal-passport-uuid-example.pdf.p7s.p7e"
+                      gender_en: "F"
+                      gender_ua: "Ж"
+                      type_info:
+                        id: 29
+                        name: "Паспорт громадянина України (ID-карта)"
+                      last_name_en: "Kovalenko"
+                      last_name_ua: "Коваленко"
+                      residence_ua: "УКРАЇНА М. КИЇВ ВУЛ. ХРЕЩАТИК БУД. 15 КВ. 42.\nДата реєстрації: 15.08.2010"
+                      first_name_en: "Olena"
+                      first_name_ua: "Олена"
+                      record_number: "19900512-01234"
+                      birth_place_ua: "М. КИЇВ КИЇВСЬКА ОБЛАСТЬ УКРАЇНА"
+                      middle_name_ua: "Петрівна"
+                      nationality_ua: "Україна"
+                      taxpayer_number: "1234567890"
+                      issue_country_code: "UA"
+                      issue_department_code: "1355"
+                      residence_country_code: "UA"
+                    linked_documents: []
+                  is_primary: true
+                  signature:
+                    - type: "e-signature"
+                      client_id: "d56f0b25-115f-4e22-9069-a257ac8bdea2"
+                      signed_at: "2026-01-06T14:13:41.773Z"
+                      signed_by: "client"
+                  channel: "dia"
+                  created_at: "2026-01-06 14:13:42.252514"
+                  source: "client"
+                  type: "passport"
+                  updated_at: "2026-01-06 14:13:42.252514"
+                  company_client_id: "d7d4cae6-636b-4b2d-9fb3-968046a375e6"
+                  status: "active"
   /action_types:
     get:
       summary: Get Action Types
@@ -1333,6 +1470,7 @@ paths:
   /clients/{client_id}/documents:
     post:
       summary: Create Document
+      description: Створює новий документ для клієнта. Підтримує різні типи документів - паспорти, ІПН, договори тощо. Документ автоматично прив'язується до компанії клієнта та може містити електронні підписи. Використовується для завантаження документів з Дії, мобільного додатку або інших джерел.
       tags: [API/Documents]
       parameters:
       - name: client_id
@@ -1361,9 +1499,76 @@ paths:
               required: [type]
         required: true
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: {type: string, format: uuid}
+                  owner: {type: object}
+                  data: {type: object}
+                  is_primary: {type: boolean}
+                  signature: {type: array, items: {type: object}}
+                  channel: {type: string}
+                  created_at: {type: string, format: date-time}
+                  source: {type: string}
+                  type: {type: string}
+                  updated_at: {type: string, format: date-time}
+                  company_client_id: {type: string, format: uuid}
+                  status: {type: string}
+              example:
+                id: "6aa72d48-c026-4a7a-b86b-3703d9cea8d2"
+                owner:
+                  id: "545962e5-4f87-4d44-8fa7-6fd5be278d1d"
+                  type: "client"
+                data:
+                  tags: ["passport", "national_id", "ukraine"]
+                  number: "001234567"
+                  series: ""
+                  issued_at: "2020-03-15"
+                  issued_by: "1355"
+                  description: "Паспорт громадянина України (ID-карта з Дії)"
+                  valid_until: "2030-03-15"
+                  additional_data:
+                    birthday: "1990-05-12"
+                    file_name: "internal-passport-uuid-example.pdf.p7s.p7e"
+                    gender_en: "F"
+                    gender_ua: "Ж"
+                    type_info:
+                      id: 29
+                      name: "Паспорт громадянина України (ID-карта)"
+                    last_name_en: "Kovalenko"
+                    last_name_ua: "Коваленко"
+                    residence_ua: "УКРАЇНА М. КИЇВ ВУЛ. ХРЕЩАТИК БУД. 15 КВ. 42.\nДата реєстрації: 15.08.2010"
+                    first_name_en: "Olena"
+                    first_name_ua: "Олена"
+                    record_number: "19900512-01234"
+                    birth_place_ua: "М. КИЇВ КИЇВСЬКА ОБЛАСТЬ УКРАЇНА"
+                    middle_name_ua: "Петрівна"
+                    nationality_ua: "Україна"
+                    taxpayer_number: "1234567890"
+                    issue_country_code: "UA"
+                    issue_department_code: "1355"
+                    residence_country_code: "UA"
+                  linked_documents: []
+                is_primary: true
+                signature:
+                  - type: "e-signature"
+                    client_id: "545962e5-4f87-4d44-8fa7-6fd5be278d1d"
+                    signed_at: "2026-01-13T17:48:24.579Z"
+                    signed_by: "client"
+                channel: "dia"
+                created_at: "2026-01-13T17:48:25.167268Z"
+                source: "client"
+                type: "passport"
+                updated_at: "2026-01-13T17:48:25.167268Z"
+                company_client_id: "256f6004-2b6d-442c-8c27-aa59f14fd523"
+                status: "active"
     get:
       summary: List Documents
+      description: Отримує список всіх документів клієнта. Можна фільтрувати за типом документа (passport, taxpayer_number, master_agreement тощо). Повертає масив документів з повною інформацією про кожен документ, включно з підписами та додатковими даними.
       tags: [API/Documents]
       parameters:
       - name: client_id
@@ -1377,7 +1582,112 @@ paths:
         required: false
         schema: {type: string}
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    owner: {type: object}
+                    data: {type: object}
+                    is_primary: {type: boolean}
+                    signature: {type: array, items: {type: object}}
+                    channel: {type: string}
+                    created_at: {type: string, format: date-time}
+                    source: {type: string}
+                    type: {type: string}
+                    updated_at: {type: string, format: date-time}
+                    company_client_id: {type: string, format: uuid}
+                    status: {type: string}
+              example:
+                - id: "95a02876-3ed8-48ac-abf5-155aa0131a0f"
+                  owner:
+                    id: "cea63932-3344-4559-b93d-bf4996b4481b"
+                    type: "client"
+                  data:
+                    tags: ["passport", "national_id", "ukraine"]
+                    number: "001234567"
+                    series: ""
+                    issued_at: "2020-03-15"
+                    issued_by: "1355"
+                    description: "Паспорт громадянина України (ID-карта з Дії)"
+                    valid_until: "2030-03-15"
+                    additional_data:
+                      birthday: "1990-05-12"
+                      gender_en: "F"
+                      gender_ua: "Ж"
+                      type_info:
+                        id: 29
+                        name: "Паспорт громадянина України (ID-карта)"
+                      last_name_en: "Kovalenko"
+                      last_name_ua: "Коваленко"
+                      first_name_en: "Olena"
+                      first_name_ua: "Олена"
+                      middle_name_ua: "Петрівна"
+                      residence_ua: "УКРАЇНА М. КИЇВ ВУЛ. ХРЕЩАТИК БУД. 15 КВ. 42.\nДата реєстрації: 15.08.2010"
+                      taxpayer_number: "1234567890"
+                    linked_documents: []
+                  is_primary: true
+                  signature:
+                    - type: "e-signature"
+                      client_id: "cea63932-3344-4559-b93d-bf4996b4481b"
+                      signed_at: "2025-12-15T10:32:46.533Z"
+                      signed_by: "client"
+                  channel: "dia"
+                  created_at: "2025-12-15 10:32:46.784418"
+                  source: "client"
+                  type: "passport"
+                  updated_at: "2025-12-15 10:32:46.784418"
+                  company_client_id: "a4165856-3a76-42e8-8d67-c514546a41f0"
+                  status: "active"
+                - id: "e60ee83a-9f37-4cdd-97b8-f77d7a4be499"
+                  owner:
+                    id: "cea63932-3344-4559-b93d-bf4996b4481b"
+                    type: "client"
+                  data:
+                    tags: ["inn", "tax_id", "ukraine"]
+                    description: "РНОКПП (ідентифікаційний номер платника податків)"
+                    taxpayer_number: "1234567890"
+                    linked_documents: []
+                  is_primary: false
+                  signature:
+                    - type: "e-signature"
+                      client_id: "cea63932-3344-4559-b93d-bf4996b4481b"
+                      signed_at: "2025-12-15T10:32:46.533Z"
+                      signed_by: "client"
+                  channel: "dia"
+                  created_at: "2025-12-15 10:32:47.12571"
+                  source: "client"
+                  type: "taxpayer_number"
+                  updated_at: "2025-12-15 10:32:47.12571"
+                  company_client_id: "a4165856-3a76-42e8-8d67-c514546a41f0"
+                  status: "active"
+                - id: "d3a396c4-612e-4d82-b855-49de2f3bacf9"
+                  owner:
+                    id: "cea63932-3344-4559-b93d-bf4996b4481b"
+                    type: "client"
+                  data:
+                    tags: ["master_agreement"]
+                    description: "Нульовий договір"
+                    preview_link: "https://uapi-test.tascombank.ua/print-service/getPrintResult/shared?id="
+                    external_doc_id: ""
+                  is_primary: true
+                  signature:
+                    - type: "e-signature"
+                      client_id: "cea63932-3344-4559-b93d-bf4996b4481b"
+                      signed_at: "2026-01-13T13:58:17.000Z"
+                      signed_by: "client"
+                  channel: "mob_app"
+                  created_at: "2026-01-13 13:58:17.806689"
+                  source: "client"
+                  type: "master_agreement"
+                  updated_at: "2026-01-13 13:58:17.806689"
+                  company_client_id: "a4165856-3a76-42e8-8d67-c514546a41f0"
+                  status: "active"
   /companies/{id}:
     delete:
       summary: Delete Company
