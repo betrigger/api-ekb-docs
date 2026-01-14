@@ -196,6 +196,7 @@ paths:
   /action_types:
     get:
       summary: Get Action Types
+      description: Отримує список типів дій для ордерів з можливістю фільтрації за типом заявки та групою навичок. Повертає масив типів дій з інформацією про код, назву, опис, групу навичок та тип заявки. Використовується для відображення доступних дій при створенні ордерів.
       tags: [API/Applications]
       parameters:
       - name: type_id
@@ -209,10 +210,68 @@ paths:
         required: false
         schema: {type: string}
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    skill_group_name: {type: string}
+                    type_name: {type: string}
+                    code: {type: string}
+                    is_active: {type: string}
+                    skill_group_id: {type: string, format: uuid}
+                    type_id: {type: string, format: uuid}
+                    name: {type: string}
+                    description: {type: string}
+                    sort_order: {type: integer}
+                    type_code: {type: string}
+                    skill_group_code: {type: string}
+              example:
+                - id: "781a34cf-0f55-4571-b9ca-616fb4af2e91"
+                  skill_group_name: "КЦ"
+                  type_name: "Онбординг"
+                  code: "check_application"
+                  is_active: "t"
+                  skill_group_id: "9b3bfea0-86a8-46f2-be4f-acf16455eea3"
+                  type_id: "d6fd37e2-9caa-4b6d-ab72-ae8af2e33c0a"
+                  name: "Перевірка анкети"
+                  description: "Нова створена заявка"
+                  sort_order: 1
+                  type_code: "onboarding"
+                  skill_group_code: "kc"
+                - id: "1f86f886-47c5-4020-9ce0-241f7137beb0"
+                  skill_group_name: "ФМ"
+                  type_name: "Онбординг"
+                  code: "fm_manual_check"
+                  is_active: "t"
+                  skill_group_id: "80149602-a219-456d-88f3-0b2a00d03adc"
+                  type_id: "d6fd37e2-9caa-4b6d-ab72-ae8af2e33c0a"
+                  name: "Ручні перевірки ФМ"
+                  description: "Ручна перевірка фінансового моніторингу"
+                  sort_order: 1
+                  type_code: "onboarding"
+                  skill_group_code: "fm"
+                - id: "46debe5d-4984-49ff-a299-7fbd24d6e90e"
+                  skill_group_name: "АЮД"
+                  type_name: "Онбординг"
+                  code: "check_documents"
+                  is_active: "t"
+                  skill_group_id: "caa53891-4cca-4f5d-81b6-644f4e1afb6e"
+                  type_id: "d6fd37e2-9caa-4b6d-ab72-ae8af2e33c0a"
+                  name: "Перевірка"
+                  description: "Перевірка документів юридичним відділом"
+                  sort_order: 1
+                  type_code: "onboarding"
+                  skill_group_code: "aud"
   /applications/stats:
     get:
       summary: Applications Stats
+      description: Отримує статистику заявок, згруповану за статусами. Повертає масив об'єктів з інформацією про кожен статус, включно з кількістю заявок у цьому статусі, назвою, кодом та кольоровою схемою. Підтримує ті ж фільтри, що й список заявок. Використовується для відображення дашбордів та аналітики.
       tags: [API/Applications]
       parameters:
       - name: type_id
@@ -276,10 +335,45 @@ paths:
         required: false
         schema: {type: string}
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    status_id: {type: string, format: uuid}
+                    status_code: {type: string}
+                    status_name: {type: string}
+                    status_color: {type: string}
+                    count: {type: integer}
+              example:
+                - status_id: "694928a6-d513-4053-a955-345ddf75e8a0"
+                  status_code: "new"
+                  status_name: "Нова"
+                  status_color: "{\"text\": \"#1976D2\", \"border\": \"#B2DDFF\", \"background\": \"#E3F2FD\"}"
+                  count: 9
+                - status_id: "627de034-072f-4bc9-aae2-57061562ce19"
+                  status_code: "in_progress"
+                  status_name: "В роботі"
+                  status_color: "{\"text\": \"#F57C00\", \"border\": \"#FEDF89\", \"background\": \"#FFF3E0\"}"
+                  count: 1
+                - status_id: "5ba5ad63-6de3-43f4-b7d0-c8ef0e03cfc3"
+                  status_code: "completed"
+                  status_name: "Завершена"
+                  status_color: "{\"text\": \"#388E3C\", \"border\": \"#ABEFC6\", \"background\": \"#E8F5E9\"}"
+                  count: 0
+                - status_id: "11a46351-8a2c-468b-9e0f-f50e612b4e97"
+                  status_code: "rejected"
+                  status_name: "Відхилена"
+                  status_color: "{\"text\": \"#D32F2F\", \"border\": \"#FECDCA\", \"background\": \"#FFEBEE\"}"
+                  count: 0
   /applications:
     post:
       summary: Create Application
+      description: Створює нову заявку в системі. Приймає обов'язкові параметри - тип заявки, статус, пріоритет та ID клієнта з ЕКБ. Опціонально можна передати ім'я клієнта, ІПН та телефон. Після створення повертає повну інформацію про заявку з автоматично згенерованим номером. Використовується при створенні нових заявок на онбординг або інші процеси.
       tags: [API/Applications]
       requestBody:
         content:
@@ -297,9 +391,41 @@ paths:
               required: [type_id, status_id, priority_id, ekb_client_id]
         required: true
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    priority_id: {type: string, format: uuid}
+                    status_id: {type: string, format: uuid}
+                    client_phone: {type: string}
+                    updated_at: {type: string, format: date-time}
+                    type_id: {type: string, format: uuid}
+                    client_tax_id: {type: string}
+                    created_at: {type: string, format: date-time}
+                    application_number: {type: integer}
+                    ekb_client_id: {type: string, format: uuid}
+                    client_name: {type: string}
+              example:
+                - id: "bbf95c96-b2d0-4827-a74b-eede966e34cd"
+                  priority_id: "99d31fed-449d-4510-8151-30c9912c34f9"
+                  status_id: "694928a6-d513-4053-a955-345ddf75e8a0"
+                  client_phone: "380501234567"
+                  updated_at: "2026-01-13 13:59:30.909441"
+                  type_id: "d6fd37e2-9caa-4b6d-ab72-ae8af2e33c0a"
+                  client_tax_id: "1234567890"
+                  created_at: "2026-01-13 13:59:30.909441"
+                  application_number: 1000013
+                  ekb_client_id: "cea63932-3344-4559-b93d-bf4996b4481b"
+                  client_name: "Коваленко Олена Петрівна"
     get:
       summary: List Applications
+      description: Отримує список всіх заявок з можливістю фільтрації та пагінації. Підтримує фільтрацію за типом, статусом, пріоритетом, клієнтом, датами створення, призначеною групою та необхідною дією. Повертає масив заявок з повною інформацією про кожну заявку, включно з клієнтськими даними, статусами та активними ордерами.
       tags: [API/Applications]
       parameters:
       - name: type_id
@@ -368,10 +494,100 @@ paths:
         required: false
         schema: {type: string}
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    type_name: {type: string}
+                    status_code: {type: string}
+                    status_color: {type: string}
+                    created_at: {type: string, format: date-time}
+                    ekb_client_id: {type: string, format: uuid}
+                    priority_id: {type: string, format: uuid}
+                    status_id: {type: string, format: uuid}
+                    updated_at: {type: string, format: date-time}
+                    client_name: {type: string}
+                    priority_name: {type: string}
+                    client_phone: {type: string}
+                    type_id: {type: string, format: uuid}
+                    status_name: {type: string}
+                    client_tax_id: {type: string}
+                    priority_code: {type: string}
+                    application_number: {type: integer}
+                    type_code: {type: string}
+              example:
+                - id: "443e0662-475a-4b57-b6f6-302fadd78d85"
+                  type_name: "Онбординг"
+                  status_code: "new"
+                  status_color: "{\"text\": \"#1976D2\", \"border\": \"#B2DDFF\", \"background\": \"#E3F2FD\"}"
+                  created_at: "2026-01-09 15:29:44.349062"
+                  ekb_client_id: "554500fb-ecac-463e-8e5f-523eaebc6ff7"
+                  priority_id: "99d31fed-449d-4510-8151-30c9912c34f9"
+                  status_id: "694928a6-d513-4053-a955-345ddf75e8a0"
+                  updated_at: "2026-01-09 15:29:44.349062"
+                  client_name: "Коваленко Олена Петрівна"
+                  priority_name: "Низький"
+                  client_phone: "380501234567"
+                  type_id: "d6fd37e2-9caa-4b6d-ab72-ae8af2e33c0a"
+                  status_name: "Нова"
+                  client_tax_id: "1234567890"
+                  priority_code: "low"
+                  application_number: 1000010
+                  type_code: "onboarding"
+                - id: "54683cbf-aa36-4ce0-b84e-5d448828ee9b"
+                  type_name: "Онбординг"
+                  status_code: "new"
+                  order_assigned_to_name: "CC Test"
+                  status_color: "{\"text\": \"#1976D2\", \"border\": \"#B2DDFF\", \"background\": \"#E3F2FD\"}"
+                  created_at: "2026-01-05 17:41:46.529025"
+                  ekb_client_id: "77e671fa-84cc-43fb-a0e3-a4e928d1fd45"
+                  required_action_name: "Перевірка анкети"
+                  order_status: "in_progress"
+                  priority_id: "99d31fed-449d-4510-8151-30c9912c34f9"
+                  status_id: "694928a6-d513-4053-a955-345ddf75e8a0"
+                  updated_at: "2026-01-05 17:41:46.529025"
+                  client_name: "Шевченко Марія Іванівна"
+                  priority_name: "Низький"
+                  required_action_code: "check_application"
+                  client_phone: "380671234567"
+                  assigned_to_group_code: "kc"
+                  type_id: "d6fd37e2-9caa-4b6d-ab72-ae8af2e33c0a"
+                  status_name: "Нова"
+                  client_tax_id: "2345678901"
+                  order_assigned_to: "f6a57e09-e1a3-4983-a970-94b61025a035"
+                  priority_code: "low"
+                  assigned_to_group_name: "КЦ"
+                  active_order_id: "a7881ec8-b391-4cdf-b753-60f03db729e4"
+                  application_number: 1000005
+                  type_code: "onboarding"
+                - id: "7049bb55-fb5e-4535-89f0-b1d6b51fc9d0"
+                  type_name: "Онбординг"
+                  status_code: "in_progress"
+                  status_color: "{\"text\": \"#F57C00\", \"border\": \"#FEDF89\", \"background\": \"#FFF3E0\"}"
+                  created_at: "2025-12-24 06:06:25.111813"
+                  ekb_client_id: "abe4f8ff-f2a0-4a28-b8cc-9fefc301cb81"
+                  priority_id: "99d31fed-449d-4510-8151-30c9912c34f9"
+                  status_id: "627de034-072f-4bc9-aae2-57061562ce19"
+                  updated_at: "2025-12-30 10:01:57.313927"
+                  client_name: "Мельник Дмитро Олександрович"
+                  priority_name: "Низький"
+                  client_phone: "380631234567"
+                  type_id: "d6fd37e2-9caa-4b6d-ab72-ae8af2e33c0a"
+                  status_name: "В роботі"
+                  client_tax_id: "3456789012"
+                  priority_code: "low"
+                  application_number: 1000001
+                  type_code: "onboarding"
   /applications/{id}:
     get:
       summary: Get Application By ID
+      description: Отримує повну інформацію про заявку за її унікальним ідентифікатором. Повертає масив з одним об'єктом заявки, що містить всі дані про клієнта, тип, статус, пріоритет, активні ордери та призначення. Використовується для перегляду детальної інформації про конкретну заявку.
       tags: [API/Applications]
       parameters:
       - name: id
@@ -380,7 +596,68 @@ paths:
         required: true
         schema: {type: string}
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    type_name: {type: string}
+                    status_code: {type: string}
+                    order_assigned_to_name: {type: string}
+                    status_color: {type: string}
+                    created_at: {type: string, format: date-time}
+                    ekb_client_id: {type: string, format: uuid}
+                    required_action_name: {type: string}
+                    order_status: {type: string}
+                    priority_id: {type: string, format: uuid}
+                    status_id: {type: string, format: uuid}
+                    updated_at: {type: string, format: date-time}
+                    client_name: {type: string}
+                    priority_name: {type: string}
+                    required_action_code: {type: string}
+                    client_phone: {type: string}
+                    assigned_to_group_code: {type: string}
+                    type_id: {type: string, format: uuid}
+                    status_name: {type: string}
+                    client_tax_id: {type: string}
+                    order_assigned_to: {type: string, format: uuid}
+                    priority_code: {type: string}
+                    assigned_to_group_name: {type: string}
+                    active_order_id: {type: string, format: uuid}
+                    application_number: {type: integer}
+                    type_code: {type: string}
+              example:
+                - id: "2121a36a-60db-4bbe-968b-8364609a4f79"
+                  type_name: "Онбординг"
+                  status_code: "new"
+                  order_assigned_to_name: "КЦ Тест"
+                  status_color: "{\"text\": \"#1976D2\", \"border\": \"#B2DDFF\", \"background\": \"#E3F2FD\"}"
+                  created_at: "2025-12-30 10:03:48.982498"
+                  ekb_client_id: "abe4f8ff-f2a0-4a28-b8cc-9fefc301cb81"
+                  required_action_name: "Перевірка анкети"
+                  order_status: "in_progress"
+                  priority_id: "99d31fed-449d-4510-8151-30c9912c34f9"
+                  status_id: "694928a6-d513-4053-a955-345ddf75e8a0"
+                  updated_at: "2025-12-30 10:03:48.982498"
+                  client_name: "Шевченко Марія Іванівна"
+                  priority_name: "Низький"
+                  required_action_code: "check_application"
+                  client_phone: "+380509876543"
+                  assigned_to_group_code: "kc"
+                  type_id: "d6fd37e2-9caa-4b6d-ab72-ae8af2e33c0a"
+                  status_name: "Нова"
+                  client_tax_id: "9876543210"
+                  order_assigned_to: "f6a57e09-e1a3-4983-a970-94b61025a035"
+                  priority_code: "low"
+                  assigned_to_group_name: "КЦ"
+                  active_order_id: "d3cfeee6-065d-4df5-bdb3-fdad166e8191"
+                  application_number: 1000004
+                  type_code: "onboarding"
     delete:
       summary: Delete Application
       tags: [API/Applications]
@@ -435,12 +712,43 @@ paths:
         '200': {description: Successful response}
     get:
       summary: List Companies
+      description: Отримує список всіх компаній в системі. Повертає масив компаній з базовою інформацією про кожну компанію, включно з назвою, статусом та датами створення/оновлення. Використовується для перегляду доступних компаній та їх статусів.
       tags: [API/Companies]
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    updated_at: {type: string, format: date-time}
+                    name: {type: string}
+                    created_at: {type: string, format: date-time}
+                    status: {type: string}
+              example:
+                - id: "b780a2d3-e7df-45cd-b107-a9366bb9683f"
+                  updated_at: "2025-09-15 12:36:55.895678"
+                  name: "TAS Bank"
+                  created_at: "2025-09-15 12:36:55.895678"
+                  status: "active"
+                - id: "c891b3e4-f8e0-56de-c218-ba477cc0794g"
+                  updated_at: "2025-10-20 09:15:30.123456"
+                  name: "TAS Finance"
+                  created_at: "2025-08-01 14:20:10.987654"
+                  status: "active"
+                - id: "d902c4f5-g9f1-67ef-d329-cb588dd1805h"
+                  updated_at: "2025-11-05 16:45:22.456789"
+                  name: "TAS Insurance"
+                  created_at: "2025-07-12 11:30:45.654321"
+                  status: "inactive"
   /clients/{client_id}/addresses:
     post:
       summary: Create Address
+      description: Створює нову адресу для клієнта. Підтримує різні типи адрес (реєстрація, проживання, кореспонденція). Адреса може містити повну структуру з країною, регіоном, містом, вулицею, будинком та квартирою. Використовується при онбордингу клієнтів або оновленні адресних даних.
       tags: [API/Addresses]
       parameters:
       - name: client_id
@@ -478,9 +786,59 @@ paths:
                 external_type_id: {default: '', description: '', type: string}
         required: true
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    country: {type: string}
+                    is_primary: {type: string}
+                    data: {type: string}
+                    city: {type: string}
+                    description: {type: string}
+                    created_at: {type: string, format: date-time}
+                    source: {type: string}
+                    external_type_id: {type: string}
+                    building: {type: string}
+                    valid: {type: string}
+                    updated_at: {type: string, format: date-time}
+                    street: {type: string}
+                    company_client_id: {type: string, format: uuid}
+                    district: {type: string}
+                    used_for: {type: string}
+                    location: {type: string}
+                    region: {type: string}
+                    apartment: {type: string}
+                    status: {type: string}
+              example:
+                - id: "bfe48a11-d431-4243-90ec-4d28426619d7"
+                  country: "{\"code\": \"UA\", \"name\": \"Україна\"}"
+                  is_primary: "t"
+                  data: "{}"
+                  city: "{\"name\": \"Київ\", \"type\": \"місто\"}"
+                  description: "Адресу додано в процесі онбордингу в мобільному додатку як зареєстровану адресу"
+                  created_at: "2026-01-13 13:59:28.494519"
+                  source: "client"
+                  external_type_id: "1"
+                  building: "{\"letter\": \"Б\", \"number\": \"15\"}"
+                  valid: "{\"from\": \"2026-01-13\"}"
+                  updated_at: "2026-01-13 13:59:28.494519"
+                  street: "{\"name\": \"Хрещатик\", \"type\": \"вулиця\"}"
+                  company_client_id: "a4165856-3a76-42e8-8d67-c514546a41f0"
+                  district: "{}"
+                  used_for: "[]"
+                  location: "{}"
+                  region: "{\"code\": \"32\", \"name\": \"Київська область\"}"
+                  apartment: "42"
+                  status: "active"
     get:
       summary: Get Client Address
+      description: Отримує список всіх адрес клієнта. Повертає масив адрес з повною інформацією про кожну адресу, включно з країною, регіоном, містом, вулицею, будинком та квартирою. Використовується для перегляду всіх зареєстрованих адрес клієнта.
       tags: [API/Addresses]
       parameters:
       - name: client_id
@@ -489,10 +847,80 @@ paths:
         required: true
         schema: {type: string}
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    country: {type: string}
+                    is_primary: {type: string}
+                    data: {type: string}
+                    city: {type: string}
+                    description: {type: string}
+                    created_at: {type: string, format: date-time}
+                    source: {type: string}
+                    external_type_id: {type: string}
+                    building: {type: string}
+                    valid: {type: string}
+                    updated_at: {type: string, format: date-time}
+                    street: {type: string}
+                    company_client_id: {type: string, format: uuid}
+                    district: {type: string}
+                    used_for: {type: string}
+                    location: {type: string}
+                    region: {type: string}
+                    apartment: {type: string}
+                    status: {type: string}
+              example:
+                - id: "bfe48a11-d431-4243-90ec-4d28426619d7"
+                  country: "{\"code\": \"UA\", \"name\": \"Україна\"}"
+                  is_primary: "t"
+                  data: "{}"
+                  city: "{\"name\": \"Київ\", \"type\": \"місто\"}"
+                  description: "Адресу додано в процесі онбордингу в мобільному додатку як зареєстровану адресу"
+                  created_at: "2026-01-13 13:59:28.494519"
+                  source: "client"
+                  external_type_id: "1"
+                  building: "{\"letter\": \"Б\", \"number\": \"15\"}"
+                  valid: "{\"from\": \"2026-01-13\"}"
+                  updated_at: "2026-01-13 13:59:28.494519"
+                  street: "{\"name\": \"Хрещатик\", \"type\": \"вулиця\"}"
+                  company_client_id: "a4165856-3a76-42e8-8d67-c514546a41f0"
+                  district: "{}"
+                  used_for: "[]"
+                  location: "{}"
+                  region: "{\"code\": \"32\", \"name\": \"Київська область\"}"
+                  apartment: "42"
+                  status: "active"
+                - id: "a645c652-65de-40c2-bdd9-1f127fb930ae"
+                  country: "{\"code\": \"UA\", \"name\": \"Україна\"}"
+                  is_primary: "f"
+                  data: "{}"
+                  city: "{\"name\": \"Львів\", \"type\": \"місто\"}"
+                  description: "Адреса фактичного проживання"
+                  created_at: "2025-12-23 13:50:30.746812"
+                  source: "client"
+                  external_type_id: "0"
+                  building: "{\"letter\": \"\", \"number\": \"25\"}"
+                  valid: "{\"from\": \"2025-12-23\"}"
+                  updated_at: "2026-01-09 08:46:36.030024"
+                  street: "{\"name\": \"Шевченка\", \"type\": \"вулиця\"}"
+                  company_client_id: "a4165856-3a76-42e8-8d67-c514546a41f0"
+                  district: "{}"
+                  used_for: "[]"
+                  location: "{}"
+                  region: "{\"code\": \"46\", \"name\": \"Львівська область\"}"
+                  apartment: "10"
+                  status: "active"
   /clients_empty:
     post:
       summary: Create empty client
+      description: Створює порожнього клієнта з мінімальним набором даних. Генерує тільки client_id та зв'язує клієнта з компанією. Використовується для швидкої попередньої реєстрації клієнта перед заповненням повних даних або для резервування client_id в системі.
       tags: [API/Clients]
       requestBody:
         content:
@@ -506,10 +934,22 @@ paths:
               required: [status, company_status, company_id]
         required: true
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    client_id: {type: string, format: uuid}
+              example:
+                - client_id: "545962e5-4f87-4d44-8fa7-6fd5be278d1d"
   /clients/{client_id}/events:
     post:
       summary: Create Event
+      description: Створює нову подію для клієнта. Підтримує різні типи подій - push повідомлення, SMS, email, системні події тощо. Подія може містити дані повідомлення, налаштування нотифікацій, канал відправки та статус доставки. Використовується для логування комунікацій з клієнтом та відстеження їх статусу.
       tags: [API/Events]
       parameters:
       - name: client_id
@@ -534,9 +974,47 @@ paths:
                 notification_settings: {default: '{}', description: '', type: object}
         required: true
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    read: {type: string}
+                    data: {type: string}
+                    notification_settings: {type: string}
+                    channel: {type: string}
+                    description: {type: string}
+                    created_at: {type: string, format: date-time}
+                    external_id: {type: string}
+                    type: {type: string}
+                    updated_at: {type: string, format: date-time}
+                    company_client_id: {type: string, format: uuid}
+                    category: {type: string}
+                    direction: {type: string}
+                    status: {type: string}
+              example:
+                - id: "7a6738d8-d384-4bd0-a0ab-8e80ae0503ee"
+                  read: "f"
+                  data: "{\"body\": \"Ваша заявка успішно оброблена\", \"name\": \"projects/example/messages/0:1234567890\", \"title\": \"Заявка схвалена\", \"request\": {\"value\": \"/application_status\", \"method\": \"command\"}}"
+                  notification_settings: "{}"
+                  channel: "{\"id\": \"mobile_app\", \"name\": \"Mobile App\"}"
+                  description: "Заявка схвалена"
+                  created_at: "2026-01-13 17:48:25.820924"
+                  external_id: "example_firebase_token_xyz789abc456def"
+                  type: "{\"id\": \"push_message\", \"name\": \"Push Message\"}"
+                  updated_at: "2026-01-13 17:48:25.820924"
+                  company_client_id: "256f6004-2b6d-442c-8c27-aa59f14fd523"
+                  category: "notification"
+                  direction: "out"
+                  status: "success"
     get:
       summary: List Events
+      description: Отримує список всіх подій клієнта. Повертає масив подій з повною інформацією про кожну подію, включно з типом, каналом відправки, статусом прочитання, даними повідомлення та налаштуваннями нотифікацій. Використовується для перегляду історії комунікацій з клієнтом.
       tags: [API/Events]
       parameters:
       - name: client_id
@@ -545,10 +1023,80 @@ paths:
         required: true
         schema: {type: string}
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: {type: string, format: uuid}
+                        read: {type: string}
+                        data: {type: string}
+                        notification_settings: {type: string}
+                        channel: {type: string}
+                        description: {type: string}
+                        created_at: {type: string, format: date-time}
+                        external_id: {type: string}
+                        type: {type: string}
+                        updated_at: {type: string, format: date-time}
+                        company_client_id: {type: string, format: uuid}
+                        category: {type: string}
+                        direction: {type: string}
+                        status: {type: string}
+              example:
+                events:
+                  - id: "fefe8c0f-4d4d-40b5-894e-d69e457414d0"
+                    read: "t"
+                    data: "{\"body\": \"Вам доступні нові персональні бонуси від партнерів\", \"title\": \"Персональні бонуси\", \"request\": {\"value\": \"/open_personal_bonuses\", \"method\": \"action\"}}"
+                    notification_settings: "{\"icon\": \"gift-01\", \"tone\": \"positive\", \"title\": \"Ваші бонуси оновлено\", \"subtitle\": \"Нове для вас\"}"
+                    channel: "{\"id\": \"mobile_app\", \"name\": \"Mobile App\"}"
+                    description: "Персональні бонуси"
+                    created_at: "2025-12-05 16:04:37.699677"
+                    external_id: ""
+                    type: "{\"id\": \"push_message\", \"name\": \"Push Message\"}"
+                    updated_at: "2025-12-10 22:01:44.913272"
+                    company_client_id: "0777b2cf-a107-43bd-8c61-2c01a8ea22cb"
+                    category: "notification"
+                    direction: "out"
+                    status: "success"
+                  - id: "77bf9c44-dd5f-470e-9584-3f84a25d89ee"
+                    read: "f"
+                    data: "{\"body\": \"Перейдіть у додаток для завершення реєстрації\", \"title\": \"Заявку підтверджено\", \"request\": {\"value\": \"/get_current_screen\", \"method\": \"command\"}}"
+                    notification_settings: "{}"
+                    channel: "{\"id\": \"mobile_app\", \"name\": \"Mobile App\"}"
+                    description: "Заявку підтверджено"
+                    created_at: "2025-12-05 13:59:59.426225"
+                    external_id: "example_firebase_token_xyz789abc"
+                    type: "{\"id\": \"push_message\", \"name\": \"Push Message\"}"
+                    updated_at: "2025-12-05 13:59:59.426225"
+                    company_client_id: "0777b2cf-a107-43bd-8c61-2c01a8ea22cb"
+                    category: "notification"
+                    direction: "out"
+                    status: "success"
+                  - id: "15e48449-d8cd-49da-94f5-629d631b444f"
+                    read: "t"
+                    data: "{\"body\": \"До погашення мінімального платежу за кредиткою залишилось 2 дні\", \"title\": \"Мінімальний платіж\", \"request\": {\"value\": \"/open_credit_payment\", \"method\": \"action\"}}"
+                    notification_settings: "{\"icon\": \"wallet-01\", \"tone\": \"warning\", \"title\": \"Не забудь про мінімальний платіж\", \"subtitle\": \"До дедлайну — 2 дні\"}"
+                    channel: "{\"id\": \"mobile_app\", \"name\": \"Mobile App\"}"
+                    description: "Нагадування про мінімальний платіж"
+                    created_at: "2025-12-05 09:37:24.712368"
+                    external_id: ""
+                    type: "{\"id\": \"push_message\", \"name\": \"Push Message\"}"
+                    updated_at: "2025-12-05 09:45:10.453717"
+                    company_client_id: "0777b2cf-a107-43bd-8c61-2c01a8ea22cb"
+                    category: "notification"
+                    direction: "out"
+                    status: "success"
   /contacts/{contact_id}:
     put:
       summary: Update Contact
+      description: Оновлює існуючий контакт клієнта. Дозволяє змінити значення контакту, тип, статус верифікації, позначку is_primary та інші атрибути. Використовується для актуалізації контактних даних, зміни основного контакту або верифікації номерів/email.
       tags: [API/Contacts]
       parameters:
       - name: contact_id
@@ -578,9 +1126,19 @@ paths:
                 external_type_id: {default: '', description: '', type: string}
         required: true
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: {type: string}
+              example:
+                status: "success"
     get:
       summary: Get Contact
+      description: Отримує повну інформацію про конкретний контакт за його унікальним ідентифікатором. Повертає масив з одним об'єктом контакту, що містить всі дані про тип, значення, статус верифікації та додаткові атрибути.
       tags: [API/Contacts]
       parameters:
       - name: contact_id
@@ -589,9 +1147,45 @@ paths:
         required: true
         schema: {type: string}
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    is_primary: {type: string}
+                    description: {type: string}
+                    created_at: {type: string, format: date-time}
+                    type: {type: string}
+                    external_type_id: {type: string}
+                    is_verified: {type: string}
+                    updated_at: {type: string, format: date-time}
+                    subtype: {type: string}
+                    company_client_id: {type: string, format: uuid}
+                    name: {type: string}
+                    value: {type: string}
+                    status: {type: string}
+              example:
+                - id: "d726ab72-243c-401d-ae87-7cc610c8892a"
+                  is_primary: "f"
+                  description: "Firebase push token"
+                  created_at: "2026-01-13 17:40:38.162542"
+                  type: "firebase_token"
+                  external_type_id: ""
+                  is_verified: "t"
+                  updated_at: "2026-01-13 17:40:38.162542"
+                  subtype: "device"
+                  company_client_id: "256f6004-2b6d-442c-8c27-aa59f14fd523"
+                  name: ""
+                  value: "example_firebase_token_abc123def456ghi789jkl"
+                  status: "active"
     delete:
       summary: Delete Contact
+      description: Видаляє контакт клієнта за його унікальним ідентифікатором. Операція незворотна. Не можна видалити контакт, якщо він є primary (основним) без попереднього призначення іншого контакту як primary. Використовується для видалення застарілих або неактуальних контактів.
       tags: [API/Contacts]
       parameters:
       - name: contact_id
@@ -600,10 +1194,20 @@ paths:
         required: true
         schema: {type: string}
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: {type: string}
+              example:
+                status: "success"
   /clients:
     get:
       summary: List Clients
+      description: Отримує список клієнтів з можливістю фільтрації та пошуку. Підтримує фільтрацію за ПІБ, телефоном, ІПН, паспортом, датою народження, статусом. Дозволяє сортування та пагінацію результатів. Повертає базову інформацію про клієнтів включно з ПІБ, телефоном, паспортними даними та статусом.
       tags: [API/Clients]
       parameters:
       - name: last_name
@@ -677,9 +1281,60 @@ paths:
         required: false
         schema: {type: string}
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  body:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: {type: string, format: uuid}
+                        last_name: {type: string}
+                        birth: {type: string}
+                        middle_name: {type: string}
+                        first_name: {type: string}
+                        status: {type: string}
+                        phone: {type: string}
+                        passport_number: {type: string}
+                        inn: {type: string}
+              example:
+                body:
+                  - id: "7b393097-9918-4c56-a9b6-e967fabaea2c"
+                    last_name: "Коваленко"
+                    birth: "{\"date\": \"1990-05-12\", \"country\": \"UA\"}"
+                    middle_name: "Петрівна"
+                    first_name: "Олена"
+                    status: "active"
+                  - id: "95f562c8-c9d2-459a-9e60-61052428216f"
+                    phone: "+380501234567"
+                    passport_number: "001234567"
+                    inn: "1234567890"
+                    last_name: "Шевченко"
+                    birth: "{\"date\": \"1985-03-20\", \"place\": \"М.КИЇВ\", \"country\": \"UA\"}"
+                    middle_name: "Іванівна"
+                    first_name: "Марія"
+                    status: "active"
+                  - id: "a8e9b0ba-2d7e-4874-aaba-50bb52dbe252"
+                    phone: "+380509876543"
+                    birth: "{}"
+                    status: "new"
+                  - id: "b5dc46c0-f9be-4a0b-a1b0-e1b4c08b9267"
+                    phone: "+380671112233"
+                    passport_number: "002345678"
+                    inn: "2345678901"
+                    last_name: "Мельник"
+                    birth: "{\"date\": \"1992-11-08\", \"country\": \"UA\"}"
+                    middle_name: "Олександрович"
+                    first_name: "Дмитро"
+                    status: "active"
     post:
       summary: Create Client
+      description: Створює нового клієнта в системі. Приймає профільні дані клієнта (ПІБ, дата народження, тощо), статус компанії та додаткові атрибути. Після створення повертає повну інформацію про клієнта включно з автоматично згенерованими ID та контактами. Використовується при онбордингу нових клієнтів.
       tags: [API/Clients]
       requestBody:
         content:
@@ -694,10 +1349,68 @@ paths:
               required: [profile, status, company_status]
         required: true
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  client_data:
+                    type: object
+                    properties:
+                      is_related_person: {type: boolean}
+                      data: {type: object}
+                      residence_status: {type: string}
+                      profile: {type: object}
+                      company_status: {type: string}
+                      contacts: {type: array, items: {type: object}}
+                      status: {type: string}
+              example:
+                client_data:
+                  is_related_person: false
+                  data: {}
+                  residence_status: "resident"
+                  profile:
+                    marital_status: {}
+                    updated_at: "2026-01-03T06:54:25.94126"
+                    birth: {}
+                    created_at: "2026-01-03T06:54:25.94126"
+                    id: "db128c0a-e74d-430d-b42a-00ef32eb25fa"
+                    client_id: "a8e9b0ba-2d7e-4874-aaba-50bb52dbe252"
+                  company_status: "active"
+                  contacts:
+                    - is_primary: true
+                      created_at: "2026-01-03T06:54:26.159423"
+                      description: "Номер використаний для реєстрації в додатку"
+                      type: "phone"
+                      external_type_id: "2"
+                      is_verified: true
+                      updated_at: "2026-01-03T06:54:26.159423"
+                      subtype: "mobile"
+                      company_client_id: "d2630e5f-a18b-44af-8083-0e5da8247827"
+                      name: ""
+                      id: "94ea1812-b5c8-4a05-99cb-0e7e8c67e84e"
+                      value: "+380501234567"
+                      status: "active"
+                    - is_primary: false
+                      created_at: "2026-01-03T06:54:26.329591"
+                      description: "Firebase push token"
+                      type: "firebase_token"
+                      external_type_id: ""
+                      is_verified: true
+                      updated_at: "2026-01-03T06:54:26.329591"
+                      subtype: "device"
+                      company_client_id: "d2630e5f-a18b-44af-8083-0e5da8247827"
+                      name: ""
+                      id: "b4c896ec-87a7-4586-9160-352ccafe5dbd"
+                      value: "example_firebase_token_1234567890abcdef"
+                      status: "active"
+                  status: "new"
   /clients/{id}:
     delete:
       summary: Delete client
+      description: Видаляє клієнта з системи за його унікальним ідентифікатором. Операція незворотна. Видаляє всі пов'язані дані клієнта включно з документами, адресами та контактами. Використовується для видалення помилково створених або неактуальних клієнтів.
       tags: [API/Clients]
       parameters:
       - name: id
@@ -706,9 +1419,19 @@ paths:
         required: true
         schema: {type: string}
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: {type: string}
+              example:
+                status: "success"
     get:
       summary: Get Client by ID
+      description: Отримує повну інформацію про клієнта за його унікальним ідентифікатором. Повертає детальні дані клієнта включно з профілем, контактами (телефони, email, Firebase tokens), статусом резидентства та іншими атрибутами. Використовується для перегляду повної картки клієнта.
       tags: [API/Clients]
       parameters:
       - name: id
@@ -717,9 +1440,67 @@ paths:
         required: true
         schema: {type: string}
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  client_data:
+                    type: object
+                    properties:
+                      is_related_person: {type: boolean}
+                      data: {type: object}
+                      residence_status: {type: string}
+                      profile: {type: object}
+                      company_status: {type: string}
+                      contacts: {type: array, items: {type: object}}
+                      status: {type: string}
+              example:
+                client_data:
+                  is_related_person: false
+                  data: {}
+                  residence_status: "resident"
+                  profile:
+                    marital_status: {}
+                    updated_at: "2026-01-03T06:54:25.94126"
+                    birth: {}
+                    created_at: "2026-01-03T06:54:25.94126"
+                    id: "db128c0a-e74d-430d-b42a-00ef32eb25fa"
+                    client_id: "a8e9b0ba-2d7e-4874-aaba-50bb52dbe252"
+                  company_status: "active"
+                  contacts:
+                    - is_primary: true
+                      created_at: "2026-01-03T06:54:26.159423"
+                      description: "Номер використаний для реєстрації в додатку"
+                      type: "phone"
+                      external_type_id: "2"
+                      is_verified: true
+                      updated_at: "2026-01-03T06:54:26.159423"
+                      subtype: "mobile"
+                      company_client_id: "d2630e5f-a18b-44af-8083-0e5da8247827"
+                      name: ""
+                      id: "94ea1812-b5c8-4a05-99cb-0e7e8c67e84e"
+                      value: "+380501234567"
+                      status: "active"
+                    - is_primary: false
+                      created_at: "2026-01-03T06:54:26.329591"
+                      description: "Firebase push token"
+                      type: "firebase_token"
+                      external_type_id: ""
+                      is_verified: true
+                      updated_at: "2026-01-03T06:54:26.329591"
+                      subtype: "device"
+                      company_client_id: "d2630e5f-a18b-44af-8083-0e5da8247827"
+                      name: ""
+                      id: "b4c896ec-87a7-4586-9160-352ccafe5dbd"
+                      value: "example_firebase_token_1234567890abcdef"
+                      status: "active"
+                  status: "active"
     put:
       summary: Update Client
+      description: Оновлює дані існуючого клієнта. Дозволяє змінити профільну інформацію, статус клієнта, статус компанії та додаткові атрибути. Використовується для актуалізації даних клієнта, зміни його статусу або оновлення профілю.
       tags: [API/Clients]
       parameters:
       - name: id
@@ -739,10 +1520,20 @@ paths:
                 company_status: {default: '', description: '', type: string}
         required: true
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: {type: string}
+              example:
+                status: "success"
   /orders/{id}:
     get:
       summary: Get Order By ID
+      description: Отримує повну інформацію про ордер за його унікальним ідентифікатором. Повертає масив з одним об'єктом ордера, що містить всі дані про групу навичок, тип дії, заявку, призначення, рішення та статус.
       tags: [API/Applications]
       parameters:
       - name: id
@@ -751,7 +1542,50 @@ paths:
         required: true
         schema: {type: string}
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    skill_group_name: {type: string}
+                    action_type_id: {type: string, format: uuid}
+                    skill_group_id: {type: string, format: uuid}
+                    created_at: {type: string, format: date-time}
+                    decision_name: {type: string}
+                    application_id: {type: string, format: uuid}
+                    skill_group_code: {type: string}
+                    decision_code: {type: string}
+                    decision_id: {type: string, format: uuid}
+                    application_client_name: {type: string}
+                    application_number: {type: integer}
+                    action_type_code: {type: string}
+                    action_type_name: {type: string}
+                    assigned_to_name: {type: string}
+                    assigned_to: {type: string, format: uuid}
+                    status: {type: string}
+              example:
+                - id: "94b9a2b9-5928-4bd4-8824-41e0bbd3b98c"
+                  skill_group_name: "КЦ"
+                  action_type_id: "781a34cf-0f55-4571-b9ca-616fb4af2e91"
+                  skill_group_id: "9b3bfea0-86a8-46f2-be4f-acf16455eea3"
+                  created_at: "2026-01-06 15:25:20.341531"
+                  decision_name: "Погоджено"
+                  application_id: "8ce3a98b-3cab-4f36-9c08-826fd9b9dc0e"
+                  skill_group_code: "kc"
+                  decision_code: "approved"
+                  decision_id: "bd8a8bfd-2f1c-423d-8a98-30ffff27f82c"
+                  application_client_name: "Мельник Дмитро Олександрович"
+                  application_number: 1000007
+                  action_type_code: "check_application"
+                  action_type_name: "Перевірка анкети"
+                  assigned_to_name: "КЦ Тест"
+                  assigned_to: "f6a57e09-e1a3-4983-a970-94b61025a035"
+                  status: "in_progress"
     delete:
       summary: Delete Order
       tags: [API/Applications]
@@ -765,6 +1599,7 @@ paths:
         '200': {description: Successful response}
     put:
       summary: Update Order By ID
+      description: Оновлює існуючий ордер. Дозволяє змінити групу навичок, рішення, призначення співробітника, статус, коментар та дату завершення. Використовується для обробки ордерів та зміни їх статусу або призначення.
       tags: [API/Applications]
       parameters:
       - name: id
@@ -787,13 +1622,72 @@ paths:
                 completed_at: {default: '', description: '', type: string}
         required: true
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    skill_group_name: {type: string}
+                    action_type_id: {type: string, format: uuid}
+                    skill_group_id: {type: string, format: uuid}
+                    created_at: {type: string, format: date-time}
+                    application_id: {type: string, format: uuid}
+                    skill_group_code: {type: string}
+                    application_client_name: {type: string}
+                    application_number: {type: integer}
+                    action_type_code: {type: string}
+                    action_type_name: {type: string}
+                    assigned_to_name: {type: string}
+                    assigned_to: {type: string, format: uuid}
+                    status: {type: string}
+              example:
+                - id: "d3cfeee6-065d-4df5-bdb3-fdad166e8191"
+                  skill_group_name: "КЦ"
+                  action_type_id: "781a34cf-0f55-4571-b9ca-616fb4af2e91"
+                  skill_group_id: "9b3bfea0-86a8-46f2-be4f-acf16455eea3"
+                  created_at: "2025-12-30 10:03:48.982498"
+                  application_id: "2121a36a-60db-4bbe-968b-8364609a4f79"
+                  skill_group_code: "kc"
+                  application_client_name: "Шевченко Марія Іванівна"
+                  application_number: 1000004
+                  action_type_code: "check_application"
+                  action_type_name: "Перевірка анкети"
+                  assigned_to_name: "КЦ Тест"
+                  assigned_to: "f6a57e09-e1a3-4983-a970-94b61025a035"
+                  status: "in_progress"
   /application_types:
     get:
       summary: Get All Application Types
+      description: Отримує список всіх типів заявок. Повертає масив типів з інформацією про код, назву, опис, статус активності та порядок сортування. Використовується для відображення доступних типів заявок при створенні нових заявок.
       tags: [API/Applications]
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    code: {type: string}
+                    is_active: {type: string}
+                    name: {type: string}
+                    description: {type: string}
+                    sort_order: {type: integer}
+              example:
+                - id: "d6fd37e2-9caa-4b6d-ab72-ae8af2e33c0a"
+                  code: "onboarding"
+                  is_active: "t"
+                  name: "Онбординг"
+                  description: "Заявка на онбординг нового клієнта"
+                  sort_order: 0
     post:
       summary: Create Application Type
       tags: [API/Applications]
@@ -860,9 +1754,44 @@ paths:
   /skill_groups:
     get:
       summary: Get All Skill Groups
+      description: Отримує список всіх груп навичок (підрозділів). Повертає масив груп з інформацією про код, назву, статус активності та порядок сортування. Використовується для відображення доступних підрозділів та призначення співробітників до груп.
       tags: [API/Applications]
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    code: {type: string}
+                    is_active: {type: string}
+                    name: {type: string}
+                    sort_order: {type: integer}
+              example:
+                - id: "c022f7ed-ebe2-4efc-9e39-95dede16425e"
+                  code: "system"
+                  is_active: "t"
+                  name: "Система"
+                  sort_order: 1
+                - id: "9b3bfea0-86a8-46f2-be4f-acf16455eea3"
+                  code: "kc"
+                  is_active: "t"
+                  name: "КЦ"
+                  sort_order: 2
+                - id: "caa53891-4cca-4f5d-81b6-644f4e1afb6e"
+                  code: "aud"
+                  is_active: "t"
+                  name: "АЮД"
+                  sort_order: 3
+                - id: "80149602-a219-456d-88f3-0b2a00d03adc"
+                  code: "fm"
+                  is_active: "t"
+                  name: "ФМ"
+                  sort_order: 4
     post:
       summary: Create Skill Group
       tags: [API/Applications]
@@ -917,9 +1846,44 @@ paths:
   /application_priorities:
     get:
       summary: Get Application Priorities
+      description: Отримує список всіх пріоритетів заявок. Повертає масив пріоритетів з інформацією про код, назву, статус активності та порядок сортування. Використовується для відображення доступних пріоритетів при створенні та фільтрації заявок.
       tags: [API/Applications]
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    code: {type: string}
+                    is_active: {type: string}
+                    name: {type: string}
+                    sort_order: {type: integer}
+              example:
+                - id: "a4a0fa97-f6db-4581-a5e5-9a40e39f3ed1"
+                  code: "urgent"
+                  is_active: "t"
+                  name: "Терміновий"
+                  sort_order: 1
+                - id: "27d430ff-a09f-48ed-afff-bccd00906de4"
+                  code: "high"
+                  is_active: "t"
+                  name: "Високий"
+                  sort_order: 2
+                - id: "e4059f98-d060-4120-885f-62b3c05d1982"
+                  code: "normal"
+                  is_active: "t"
+                  name: "Звичайний"
+                  sort_order: 3
+                - id: "99d31fed-449d-4510-8151-30c9912c34f9"
+                  code: "low"
+                  is_active: "t"
+                  name: "Низький"
+                  sort_order: 4
     post:
       summary: Create Application Priority
       tags: [API/Applications]
@@ -976,9 +1940,54 @@ paths:
   /application_statuses:
     get:
       summary: Get Application Statuses
+      description: Отримує список всіх статусів заявок. Повертає масив статусів з інформацією про код, назву, кольорову схему, прапорці фінальності та активності. Використовується для відображення доступних статусів та їх візуалізації в інтерфейсі.
       tags: [API/Applications]
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    is_final: {type: string}
+                    code: {type: string}
+                    is_active: {type: string}
+                    color: {type: string}
+                    name: {type: string}
+                    sort_order: {type: integer}
+              example:
+                - id: "694928a6-d513-4053-a955-345ddf75e8a0"
+                  is_final: "f"
+                  code: "new"
+                  is_active: "t"
+                  color: "{\"text\": \"#1976D2\", \"border\": \"#B2DDFF\", \"background\": \"#E3F2FD\"}"
+                  name: "Нова"
+                  sort_order: 1
+                - id: "627de034-072f-4bc9-aae2-57061562ce19"
+                  is_final: "f"
+                  code: "in_progress"
+                  is_active: "t"
+                  color: "{\"text\": \"#F57C00\", \"border\": \"#FEDF89\", \"background\": \"#FFF3E0\"}"
+                  name: "В роботі"
+                  sort_order: 2
+                - id: "5ba5ad63-6de3-43f4-b7d0-c8ef0e03cfc3"
+                  is_final: "t"
+                  code: "completed"
+                  is_active: "t"
+                  color: "{\"text\": \"#388E3C\", \"border\": \"#ABEFC6\", \"background\": \"#E8F5E9\"}"
+                  name: "Завершена"
+                  sort_order: 3
+                - id: "11a46351-8a2c-468b-9e0f-f50e612b4e97"
+                  is_final: "t"
+                  code: "rejected"
+                  is_active: "t"
+                  color: "{\"text\": \"#D32F2F\", \"border\": \"#FECDCA\", \"background\": \"#FFEBEE\"}"
+                  name: "Відхилена"
+                  sort_order: 4
     post:
       summary: Create Application Status
       tags: [API/Applications]
@@ -1036,9 +2045,91 @@ paths:
   /order_decisions:
     get:
       summary: Get All Order Decisions
+      description: Отримує список всіх можливих рішень для ордерів. Повертає масив рішень з інформацією про код, назву, групу навичок, дії при створенні нових ордерів та прапорці фіналізації/відхилення. Використовується для відображення доступних рішень при обробці ордерів.
       tags: [API/Applications]
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    skill_group_name: {type: string}
+                    code: {type: string}
+                    is_active: {type: string}
+                    skill_group_id: {type: string, format: uuid}
+                    creates_with_action_type_id: {type: string, format: uuid}
+                    finalizes_application: {type: string}
+                    skill_group_code: {type: string}
+                    creates_order_for: {type: string, format: uuid}
+                    creates_order_for_code: {type: string}
+                    is_rejection: {type: string}
+                    creates_order_for_name: {type: string}
+                    name: {type: string}
+                    sort_order: {type: integer}
+              example:
+                - id: "bd8a8bfd-2f1c-423d-8a98-30ffff27f82c"
+                  skill_group_name: "КЦ"
+                  code: "approved"
+                  is_active: "t"
+                  skill_group_id: "9b3bfea0-86a8-46f2-be4f-acf16455eea3"
+                  creates_with_action_type_id: "1f86f886-47c5-4020-9ce0-241f7137beb0"
+                  finalizes_application: "f"
+                  skill_group_code: "kc"
+                  creates_order_for: "80149602-a219-456d-88f3-0b2a00d03adc"
+                  creates_order_for_code: "fm"
+                  is_rejection: "f"
+                  creates_order_for_name: "ФМ"
+                  name: "Погоджено"
+                  sort_order: 1
+                - id: "463a1e26-dc24-440e-8eaf-cdb409ca0c54"
+                  skill_group_name: "КЦ"
+                  code: "rejected"
+                  is_active: "t"
+                  skill_group_id: "9b3bfea0-86a8-46f2-be4f-acf16455eea3"
+                  finalizes_application: "t"
+                  skill_group_code: "kc"
+                  is_rejection: "t"
+                  name: "Відмовлено"
+                  sort_order: 4
+                - id: "27451593-735e-49d0-81aa-e3a836138676"
+                  skill_group_name: "ФМ"
+                  code: "approved_fm"
+                  is_active: "t"
+                  skill_group_id: "80149602-a219-456d-88f3-0b2a00d03adc"
+                  creates_with_action_type_id: "46debe5d-4984-49ff-a299-7fbd24d6e90e"
+                  finalizes_application: "f"
+                  skill_group_code: "fm"
+                  creates_order_for: "caa53891-4cca-4f5d-81b6-644f4e1afb6e"
+                  creates_order_for_code: "aud"
+                  is_rejection: "f"
+                  creates_order_for_name: "АЮД"
+                  name: "Погоджено ФМ"
+                  sort_order: 1
+                - id: "ceeaa066-a5d0-4719-bcf4-71081d58d322"
+                  skill_group_name: "АЮД"
+                  code: "documents_ok"
+                  is_active: "t"
+                  skill_group_id: "caa53891-4cca-4f5d-81b6-644f4e1afb6e"
+                  finalizes_application: "t"
+                  skill_group_code: "aud"
+                  is_rejection: "f"
+                  name: "Документи Ок"
+                  sort_order: 1
+                - id: "d67ad5b8-ae1b-4cb9-aa1e-ff84e6dc3a36"
+                  skill_group_name: "КЦ"
+                  code: "revision"
+                  is_active: "t"
+                  skill_group_id: "9b3bfea0-86a8-46f2-be4f-acf16455eea3"
+                  finalizes_application: "f"
+                  skill_group_code: "kc"
+                  is_rejection: "f"
+                  name: "Доопрацювання"
+                  sort_order: 2
     post:
       summary: Create Order Decision
       tags: [API/Applications]
@@ -1121,6 +2212,7 @@ paths:
   /events/{id}:
     put:
       summary: Update Event
+      description: Оновлює існуючу подію клієнта. Дозволяє змінити статус прочитання (read), дані повідомлення, статус доставки та інші атрибути події. Найчастіше використовується для позначення події як прочитаної або оновлення статусу доставки.
       tags: [API/Events]
       parameters:
       - name: id
@@ -1145,9 +2237,47 @@ paths:
                 read: {default: false, description: '', type: boolean}
         required: true
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    read: {type: string}
+                    data: {type: string}
+                    notification_settings: {type: string}
+                    channel: {type: string}
+                    description: {type: string}
+                    created_at: {type: string, format: date-time}
+                    external_id: {type: string}
+                    type: {type: string}
+                    updated_at: {type: string, format: date-time}
+                    company_client_id: {type: string, format: uuid}
+                    category: {type: string}
+                    direction: {type: string}
+                    status: {type: string}
+              example:
+                - id: "24fe2dfc-8925-4696-8826-a05c46b1ff3d"
+                  read: "t"
+                  data: "{\"body\": \"Для продовження користування сервісами потрібно оновити персональні дані.\", \"title\": \"Оновлення даних\", \"request\": {\"value\": \"/open_kyc_update\", \"method\": \"action\"}}"
+                  notification_settings: "{\"icon\": \"shield-01\", \"tone\": \"warning\", \"title\": \"Потрібно оновити дані\", \"variant\": \"pinned\", \"subtitle\": \"Дія потрібна найближчим часом\"}"
+                  channel: "{\"id\": \"mobile_app\", \"name\": \"Mobile App\"}"
+                  description: "Оновлення KYC"
+                  created_at: "2025-12-05 09:44:16.442937"
+                  external_id: ""
+                  type: "{\"id\": \"push_message\", \"name\": \"Push Message\"}"
+                  updated_at: "2026-01-06 13:28:11.001136"
+                  company_client_id: "0777b2cf-a107-43bd-8c61-2c01a8ea22cb"
+                  category: "notification"
+                  direction: "out"
+                  status: "success"
     get:
       summary: Get Event by ID
+      description: Отримує повну інформацію про конкретну подію за її унікальним ідентифікатором. Повертає масив з одним об'єктом події, що містить всі дані про тип, канал, статус прочитання, дані повідомлення та налаштування нотифікацій.
       tags: [API/Events]
       parameters:
       - name: id
@@ -1156,9 +2286,47 @@ paths:
         required: true
         schema: {type: string}
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    read: {type: string}
+                    data: {type: string}
+                    notification_settings: {type: string}
+                    channel: {type: string}
+                    description: {type: string}
+                    created_at: {type: string, format: date-time}
+                    external_id: {type: string}
+                    type: {type: string}
+                    updated_at: {type: string, format: date-time}
+                    company_client_id: {type: string, format: uuid}
+                    category: {type: string}
+                    direction: {type: string}
+                    status: {type: string}
+              example:
+                - id: "24fe2dfc-8925-4696-8826-a05c46b1ff3d"
+                  read: "t"
+                  data: "{\"body\": \"Для продовження користування сервісами потрібно оновити персональні дані.\", \"title\": \"Оновлення даних\", \"request\": {\"value\": \"/open_kyc_update\", \"method\": \"action\"}}"
+                  notification_settings: "{\"icon\": \"shield-01\", \"tone\": \"warning\", \"title\": \"Потрібно оновити дані\", \"variant\": \"pinned\", \"subtitle\": \"Дія потрібна найближчим часом\"}"
+                  channel: "{\"id\": \"mobile_app\", \"name\": \"Mobile App\"}"
+                  description: "Оновлення KYC"
+                  created_at: "2025-12-05 09:44:16.442937"
+                  external_id: ""
+                  type: "{\"id\": \"push_message\", \"name\": \"Push Message\"}"
+                  updated_at: "2026-01-06 13:28:11.001136"
+                  company_client_id: "0777b2cf-a107-43bd-8c61-2c01a8ea22cb"
+                  category: "notification"
+                  direction: "out"
+                  status: "success"
     delete:
       summary: Delete Event
+      description: Видаляє подію клієнта за її унікальним ідентифікатором. Операція незворотна. Використовується для видалення застарілих або помилково створених подій з історії комунікацій.
       tags: [API/Events]
       parameters:
       - name: id
@@ -1167,7 +2335,16 @@ paths:
         required: true
         schema: {type: string}
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: {type: string}
+              example:
+                status: "success"
   /audit-logs:
     get:
       summary: List Audit Log Entries
@@ -1229,6 +2406,7 @@ paths:
   /clients/{client_id}/contacts:
     get:
       summary: Get Client Contacts
+      description: Отримує список всіх контактів клієнта. Повертає масив контактів з повною інформацією про кожен контакт, включно з типом (телефон, email, Firebase token), значенням, статусом верифікації та додатковими атрибутами. Використовується для перегляду всіх способів зв'язку з клієнтом.
       tags: [API/Contacts]
       parameters:
       - name: client_id
@@ -1237,9 +2415,71 @@ paths:
         required: true
         schema: {type: string}
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    is_primary: {type: string}
+                    description: {type: string}
+                    created_at: {type: string, format: date-time}
+                    type: {type: string}
+                    external_type_id: {type: string}
+                    is_verified: {type: string}
+                    updated_at: {type: string, format: date-time}
+                    subtype: {type: string}
+                    company_client_id: {type: string, format: uuid}
+                    name: {type: string}
+                    value: {type: string}
+                    status: {type: string}
+              example:
+                - id: "94ea1812-b5c8-4a05-99cb-0e7e8c67e84e"
+                  is_primary: "t"
+                  description: "Номер використаний для реєстрації в додатку"
+                  created_at: "2026-01-03 06:54:26.159423"
+                  type: "phone"
+                  external_type_id: "2"
+                  is_verified: "t"
+                  updated_at: "2026-01-03 06:54:26.159423"
+                  subtype: "mobile"
+                  company_client_id: "d2630e5f-a18b-44af-8083-0e5da8247827"
+                  name: ""
+                  value: "+380501234567"
+                  status: "active"
+                - id: "a5fb2923-c6d9-5b16-ad12-1f8f9d78e95f"
+                  is_primary: "f"
+                  description: "Додатковий email для зв'язку"
+                  created_at: "2026-01-05 10:20:15.123456"
+                  type: "email"
+                  external_type_id: ""
+                  is_verified: "t"
+                  updated_at: "2026-01-05 10:20:15.123456"
+                  subtype: "personal"
+                  company_client_id: "d2630e5f-a18b-44af-8083-0e5da8247827"
+                  name: ""
+                  value: "client@example.com"
+                  status: "active"
+                - id: "d726ab72-243c-401d-ae87-7cc610c8892a"
+                  is_primary: "f"
+                  description: "Firebase push token"
+                  created_at: "2026-01-13 17:40:38.162542"
+                  type: "firebase_token"
+                  external_type_id: ""
+                  is_verified: "t"
+                  updated_at: "2026-01-13 17:40:38.162542"
+                  subtype: "device"
+                  company_client_id: "d2630e5f-a18b-44af-8083-0e5da8247827"
+                  name: ""
+                  value: "example_firebase_token_abc123def456ghi789jkl"
+                  status: "active"
     post:
       summary: Create Contact
+      description: Створює новий контакт для клієнта. Підтримує різні типи контактів - телефони, email, Firebase tokens тощо. Контакт може бути позначений як первинний (is_primary) та верифікований (is_verified). Використовується для додавання нових способів зв'язку з клієнтом.
       tags: [API/Contacts]
       parameters:
       - name: client_id
@@ -1270,7 +2510,42 @@ paths:
               required: [type, value]
         required: true
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    is_primary: {type: string}
+                    description: {type: string}
+                    created_at: {type: string, format: date-time}
+                    type: {type: string}
+                    external_type_id: {type: string}
+                    is_verified: {type: string}
+                    updated_at: {type: string, format: date-time}
+                    subtype: {type: string}
+                    company_client_id: {type: string, format: uuid}
+                    name: {type: string}
+                    value: {type: string}
+                    status: {type: string}
+              example:
+                - id: "d726ab72-243c-401d-ae87-7cc610c8892a"
+                  is_primary: "f"
+                  description: "Firebase push token"
+                  created_at: "2026-01-13 17:40:38.162542"
+                  type: "firebase_token"
+                  external_type_id: ""
+                  is_verified: "t"
+                  updated_at: "2026-01-13 17:40:38.162542"
+                  subtype: "device"
+                  company_client_id: "256f6004-2b6d-442c-8c27-aa59f14fd523"
+                  name: ""
+                  value: "example_firebase_token_abc123def456ghi789jkl"
+                  status: "active"
   /files/{id}:
     delete:
       summary: Delete File
@@ -1297,6 +2572,7 @@ paths:
   /addresses/{address_id}:
     get:
       summary: Get Address
+      description: Отримує повну інформацію про конкретну адресу за її унікальним ідентифікатором. Повертає масив з одним об'єктом адреси, що містить всі дані про країну, регіон, місто, вулицю, будинок, квартиру та додаткові атрибути.
       tags: [API/Addresses]
       parameters:
       - name: address_id
@@ -1305,9 +2581,59 @@ paths:
         required: true
         schema: {type: string}
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    country: {type: string}
+                    is_primary: {type: string}
+                    data: {type: string}
+                    city: {type: string}
+                    description: {type: string}
+                    created_at: {type: string, format: date-time}
+                    source: {type: string}
+                    external_type_id: {type: string}
+                    building: {type: string}
+                    valid: {type: string}
+                    updated_at: {type: string, format: date-time}
+                    street: {type: string}
+                    company_client_id: {type: string, format: uuid}
+                    district: {type: string}
+                    used_for: {type: string}
+                    location: {type: string}
+                    region: {type: string}
+                    apartment: {type: string}
+                    status: {type: string}
+              example:
+                - id: "bfe48a11-d431-4243-90ec-4d28426619d7"
+                  country: "{\"code\": \"UA\", \"name\": \"Україна\"}"
+                  is_primary: "t"
+                  data: "{}"
+                  city: "{\"name\": \"Київ\", \"type\": \"місто\"}"
+                  description: "Адресу додано в процесі онбордингу в мобільному додатку як зареєстровану адресу"
+                  created_at: "2026-01-13 13:59:28.494519"
+                  source: "client"
+                  external_type_id: "1"
+                  building: "{\"letter\": \"Б\", \"number\": \"15\"}"
+                  valid: "{\"from\": \"2026-01-13\"}"
+                  updated_at: "2026-01-13 13:59:28.494519"
+                  street: "{\"name\": \"Хрещатик\", \"type\": \"вулиця\"}"
+                  company_client_id: "a4165856-3a76-42e8-8d67-c514546a41f0"
+                  district: "{}"
+                  used_for: "[]"
+                  location: "{}"
+                  region: "{\"code\": \"32\", \"name\": \"Київська область\"}"
+                  apartment: "42"
+                  status: "active"
     delete:
       summary: Delete Address
+      description: Видаляє адресу клієнта за її унікальним ідентифікатором. Операція незворотна. Використовується для видалення застарілих, недійсних або помилково створених адрес. Не можна видалити адресу, якщо вона є primary (основною) без попереднього призначення іншої адреси як primary.
       tags: [API/Addresses]
       parameters:
       - name: address_id
@@ -1319,6 +2645,7 @@ paths:
         '200': {description: Successful response}
     put:
       summary: Update Address
+      description: Оновлює існуючу адресу клієнта. Дозволяє змінити будь-які поля адреси - від країни до квартири, а також статус, прапорець is_primary та додаткові атрибути. Використовується для актуалізації адресних даних клієнта або зміни основної адреси.
       tags: [API/Addresses]
       parameters:
       - name: address_id
@@ -1356,7 +2683,56 @@ paths:
                 external_type_id: {default: '', description: '', type: string}
         required: true
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    country: {type: string}
+                    is_primary: {type: string}
+                    data: {type: string}
+                    city: {type: string}
+                    description: {type: string}
+                    created_at: {type: string, format: date-time}
+                    source: {type: string}
+                    external_type_id: {type: string}
+                    building: {type: string}
+                    valid: {type: string}
+                    updated_at: {type: string, format: date-time}
+                    street: {type: string}
+                    company_client_id: {type: string, format: uuid}
+                    district: {type: string}
+                    used_for: {type: string}
+                    location: {type: string}
+                    region: {type: string}
+                    apartment: {type: string}
+                    status: {type: string}
+              example:
+                - id: "a645c652-65de-40c2-bdd9-1f127fb930ae"
+                  country: "{\"code\": \"UA\", \"name\": \"Україна\"}"
+                  is_primary: "f"
+                  data: "{}"
+                  city: "{\"name\": \"Київ\", \"type\": \"місто\"}"
+                  description: "Адресу додано в процесі онбордингу в мобільному додатку як зареєстровану адресу"
+                  created_at: "2025-12-23 13:50:30.746812"
+                  source: "client"
+                  external_type_id: "0"
+                  building: "{\"letter\": \"Б\", \"number\": \"15\"}"
+                  valid: "{\"from\": \"2025-12-23\"}"
+                  updated_at: "2026-01-09 08:46:36.030024"
+                  street: "{\"name\": \"Хрещатик\", \"type\": \"вулиця\"}"
+                  company_client_id: "eb040595-5c9e-432a-9307-58b84235781f"
+                  district: "{}"
+                  used_for: "[]"
+                  location: "{}"
+                  region: "{\"code\": \"32\", \"name\": \"Київська область\"}"
+                  apartment: "42"
+                  status: "active"
   /relationships/{id}:
     delete:
       summary: Delete Relationship
@@ -1790,6 +3166,7 @@ paths:
         '200': {description: Successful response}
     get:
       summary: List Orders
+      description: Отримує список ордерів з можливістю фільтрації та пагінації. Підтримує фільтрацію за заявкою, групою навичок, рішенням, статусом, призначеним співробітником та датами створення. Повертає масив ордерів з повною інформацією про кожен ордер, включно з даними заявки та призначенням.
       tags: [API/Applications]
       parameters:
       - name: application_id
@@ -1838,7 +3215,44 @@ paths:
         required: false
         schema: {type: string}
       responses:
-        '200': {description: Successful response}
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    skill_group_name: {type: string}
+                    action_type_id: {type: string, format: uuid}
+                    skill_group_id: {type: string, format: uuid}
+                    created_at: {type: string, format: date-time}
+                    application_id: {type: string, format: uuid}
+                    skill_group_code: {type: string}
+                    application_client_name: {type: string}
+                    application_number: {type: integer}
+                    action_type_code: {type: string}
+                    action_type_name: {type: string}
+                    assigned_to_name: {type: string}
+                    assigned_to: {type: string, format: uuid}
+                    status: {type: string}
+              example:
+                - id: "a7881ec8-b391-4cdf-b753-60f03db729e4"
+                  skill_group_name: "КЦ"
+                  action_type_id: "781a34cf-0f55-4571-b9ca-616fb4af2e91"
+                  skill_group_id: "9b3bfea0-86a8-46f2-be4f-acf16455eea3"
+                  created_at: "2026-01-05 17:41:46.529025"
+                  application_id: "54683cbf-aa36-4ce0-b84e-5d448828ee9b"
+                  skill_group_code: "kc"
+                  application_client_name: "Шевченко Марія Іванівна"
+                  application_number: 1000005
+                  action_type_code: "check_application"
+                  action_type_name: "Перевірка анкети"
+                  assigned_to_name: "КЦ Тест"
+                  assigned_to: "f6a57e09-e1a3-4983-a970-94b61025a035"
+                  status: "in_progress"
   /order_decisions/{id}:
     get:
       summary: Get Order Decision By ID
@@ -1928,3 +3342,291 @@ paths:
         schema: {type: string}
       responses:
         '200': {description: Successful response}
+  /employees:
+    get:
+      summary: List employees
+      description: Отримує список всіх співробітників з можливістю фільтрації. Підтримує фільтрацію за групою навичок, статусом активності та пошуком по імені/логіну. Повертає масив співробітників з інформацією про ID, логін, ім'я, групу навичок, статус активності та дати створення/оновлення.
+      tags: [API/Applications/Employees]
+      parameters:
+      - name: skill_group_id
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: is_active
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      - name: search
+        in: query
+        description: ''
+        required: false
+        schema: {type: string}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    skill_group_name: {type: string}
+                    is_active: {type: string}
+                    skill_group_id: {type: string, format: uuid}
+                    created_at: {type: string, format: date-time}
+                    login: {type: string}
+                    skill_group_code: {type: string}
+                    updated_at: {type: string, format: date-time}
+                    first_name: {type: string}
+                    last_name: {type: string}
+                    middle_name: {type: string}
+                    email: {type: string}
+                    phone: {type: string}
+                    position: {type: string}
+              example:
+                - id: "f6a57e09-e1a3-4983-a970-94b61025a035"
+                  skill_group_name: "КЦ"
+                  is_active: "t"
+                  skill_group_id: "9b3bfea0-86a8-46f2-be4f-acf16455eea3"
+                  created_at: "2026-01-09 10:19:22.881519"
+                  login: "usr_test_cc"
+                  skill_group_code: "kc"
+                  updated_at: "2026-01-09 10:34:20.805376"
+                  first_name: "Тест"
+                  last_name: "КЦ"
+                  middle_name: ""
+                  email: "test.cc@example.com"
+                  phone: "+380501234567"
+                  position: "Спеціаліст КЦ"
+                - id: "77ee78d5-c3b1-4df3-9481-61000c671c22"
+                  skill_group_name: "АЮД"
+                  is_active: "t"
+                  skill_group_id: "caa53891-4cca-4f5d-81b6-644f4e1afb6e"
+                  created_at: "2026-01-09 11:21:58.933426"
+                  login: "usr_test_laad"
+                  skill_group_code: "aud"
+                  updated_at: "2026-01-09 11:21:58.933426"
+                  first_name: "Тест"
+                  last_name: "АЮД"
+                  middle_name: ""
+                  email: "test.laad@example.com"
+                  phone: "+380509876543"
+                  position: "Спеціаліст АЮД"
+    post:
+      summary: Create employees
+      description: Створює нового співробітника в системі. Приймає логін, ПІБ, email, телефон, посаду та ID групи навичок. Після створення повертає повну інформацію про співробітника з автоматично згенерованим ID. Використовується при додаванні нових співробітників до системи.
+      tags: [API/Applications/Employees]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login: {default: '', description: '', type: string}
+                first_name: {default: '', description: '', type: string}
+                last_name: {default: '', description: '', type: string}
+                middle_name: {default: '', description: '', type: string}
+                email: {default: '', description: '', type: string}
+                phone: {default: '', description: '', type: string}
+                skill_group_id: {default: '', description: '', type: string}
+                position: {default: '', description: '', type: string}
+                is_active: {default: '', description: '', type: string}
+        required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    is_active: {type: string}
+                    created_at: {type: string, format: date-time}
+                    login: {type: string}
+                    updated_at: {type: string, format: date-time}
+                    first_name: {type: string}
+                    last_name: {type: string}
+                    middle_name: {type: string}
+                    email: {type: string}
+                    phone: {type: string}
+                    position: {type: string}
+              example:
+                - id: "d189452f-2601-4a30-8e6d-8effeec977bc"
+                  is_active: "t"
+                  created_at: "2026-01-12 11:08:35.818357"
+                  login: "usr-kovalenko-01"
+                  updated_at: "2026-01-12 11:08:35.818357"
+                  first_name: "Олена"
+                  last_name: "Коваленко"
+                  middle_name: "Петрівна"
+                  email: "o.kovalenko@example.com"
+                  phone: "+380671234567"
+                  position: "Менеджер"
+  /employees/by-login/{login}:
+    get:
+      summary: GET employee by login
+      description: Отримує інформацію про співробітника за його логіном. Повертає масив з одним об'єктом співробітника з повною інформацією. Використовується для пошуку співробітника по логіну замість ID.
+      tags: [API/Applications/Employees]
+      parameters:
+      - name: login
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    skill_group_name: {type: string}
+                    is_active: {type: string}
+                    skill_group_id: {type: string, format: uuid}
+                    created_at: {type: string, format: date-time}
+                    login: {type: string}
+                    skill_group_code: {type: string}
+                    updated_at: {type: string, format: date-time}
+                    first_name: {type: string}
+                    last_name: {type: string}
+                    middle_name: {type: string}
+                    email: {type: string}
+                    phone: {type: string}
+                    position: {type: string}
+              example:
+                - id: "f6a57e09-e1a3-4983-a970-94b61025a035"
+                  skill_group_name: "КЦ"
+                  is_active: "t"
+                  skill_group_id: "9b3bfea0-86a8-46f2-be4f-acf16455eea3"
+                  created_at: "2026-01-09 10:19:22.881519"
+                  login: "usr_test_cc"
+                  skill_group_code: "kc"
+                  updated_at: "2026-01-09 10:34:20.805376"
+                  first_name: "Тест"
+                  last_name: "КЦ"
+                  middle_name: ""
+                  email: "test.cc@example.com"
+                  phone: "+380501234567"
+                  position: "Спеціаліст КЦ"
+  /employees/{id}:
+    put:
+      summary: Update employees by id
+      description: Оновлює існуючого співробітника. Дозволяє змінити ПІБ, email, телефон, посаду, групу навичок та статус активності. Використовується для актуалізації даних співробітника або зміни його призначення.
+      tags: [API/Applications/Employees]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login: {default: '', description: '', type: string}
+                first_name: {default: '', description: '', type: string}
+                last_name: {default: '', description: '', type: string}
+                middle_name: {default: '', description: '', type: string}
+                email: {default: '', description: '', type: string}
+                phone: {default: '', description: '', type: string}
+                skill_group_id: {default: '', description: '', type: string}
+                position: {default: '', description: '', type: string}
+                is_active: {default: '', description: '', type: string}
+        required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    is_active: {type: string}
+                    skill_group_id: {type: string, format: uuid}
+                    created_at: {type: string, format: date-time}
+                    login: {type: string}
+                    updated_at: {type: string, format: date-time}
+                    first_name: {type: string}
+                    last_name: {type: string}
+                    middle_name: {type: string}
+                    email: {type: string}
+                    phone: {type: string}
+                    position: {type: string}
+              example:
+                - id: "f6a57e09-e1a3-4983-a970-94b61025a035"
+                  is_active: "t"
+                  skill_group_id: "9b3bfea0-86a8-46f2-be4f-acf16455eea3"
+                  created_at: "2026-01-09 10:19:22.881519"
+                  login: "usr_test_cc"
+                  updated_at: "2026-01-09 10:34:20.805376"
+                  first_name: "Тест"
+                  last_name: "КЦ"
+                  middle_name: ""
+                  email: "test.cc@example.com"
+                  phone: "+380501234567"
+                  position: "Старший спеціаліст КЦ"
+    get:
+      summary: Get employees by id
+      description: Отримує повну інформацію про співробітника за його унікальним ідентифікатором. Повертає масив з одним об'єктом співробітника, що містить всі дані про логін, ПІБ, email, телефон, групу навичок та статус активності.
+      tags: [API/Applications/Employees]
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema: {type: string}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string, format: uuid}
+                    skill_group_name: {type: string}
+                    is_active: {type: string}
+                    skill_group_id: {type: string, format: uuid}
+                    created_at: {type: string, format: date-time}
+                    login: {type: string}
+                    skill_group_code: {type: string}
+                    updated_at: {type: string, format: date-time}
+                    first_name: {type: string}
+                    last_name: {type: string}
+                    middle_name: {type: string}
+                    email: {type: string}
+                    phone: {type: string}
+                    position: {type: string}
+              example:
+                - id: "f6a57e09-e1a3-4983-a970-94b61025a035"
+                  skill_group_name: "КЦ"
+                  is_active: "t"
+                  skill_group_id: "9b3bfea0-86a8-46f2-be4f-acf16455eea3"
+                  created_at: "2026-01-09 10:19:22.881519"
+                  login: "usr_test_cc"
+                  skill_group_code: "kc"
+                  updated_at: "2026-01-09 10:19:22.881519"
+                  first_name: "Тест"
+                  last_name: "КЦ"
+                  middle_name: ""
+                  email: "test.cc@example.com"
+                  phone: "+380501234567"
+                  position: "Спеціаліст КЦ"
