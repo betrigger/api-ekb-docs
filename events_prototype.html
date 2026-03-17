@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Адмінка — Профіль клієнта: Події</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f5f5f4;
+  --color-background-tertiary: #eeece8;
+  --color-background-info: #e6f1fb;
+  --color-background-success: #eaf3de;
+  --color-background-danger: #fcebeb;
+  --color-background-warning: #faeeda;
+  --color-text-primary: #1a1a18;
+  --color-text-secondary: #5f5e5a;
+  --color-text-tertiary: #888780;
+  --color-text-info: #185fa5;
+  --color-text-success: #3b6d11;
+  --color-text-danger: #a32d2d;
+  --color-text-warning: #854f0b;
+  --color-border-tertiary: rgba(0,0,0,0.12);
+  --color-border-secondary: rgba(0,0,0,0.22);
+  --color-border-primary: rgba(0,0,0,0.35);
+  --color-border-info: #b5d4f4;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'SF Mono', 'Fira Code', monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background-primary: #1e1e1c;
+    --color-background-secondary: #2a2a28;
+    --color-background-tertiary: #333330;
+    --color-background-info: #0c2a44;
+    --color-background-success: #172804;
+    --color-background-danger: #3c1010;
+    --color-background-warning: #3a2204;
+    --color-text-primary: #f0ede8;
+    --color-text-secondary: #b4b2a9;
+    --color-text-tertiary: #888780;
+    --color-text-info: #85b7eb;
+    --color-text-success: #97c459;
+    --color-text-danger: #f09595;
+    --color-text-warning: #ef9f27;
+    --color-border-tertiary: rgba(255,255,255,0.1);
+    --color-border-secondary: rgba(255,255,255,0.18);
+    --color-border-primary: rgba(255,255,255,0.28);
+    --color-border-info: #185fa5;
+  }
+}
+body { font-family: var(--font-sans); font-size: 14px; color: var(--color-text-primary); background: var(--color-background-tertiary); }
+
+.layout { display: flex; height: 100vh; overflow: hidden; background: var(--color-background-primary); }
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+.topbar { padding: 12px 16px; border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; flex-shrink: 0; background: var(--color-background-primary); }
+.client-info { display: flex; align-items: center; gap: 8px; margin-right: auto; }
+.avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--color-background-info); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: var(--color-text-info); flex-shrink: 0; }
+.client-name { font-size: 14px; font-weight: 500; }
+.client-meta { font-size: 12px; color: var(--color-text-secondary); }
+
+.tabs { display: flex; gap: 2px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 3px; }
+.tab { padding: 5px 12px; font-size: 13px; border-radius: 6px; cursor: pointer; color: var(--color-text-secondary); transition: all 0.15s; white-space: nowrap; }
+.tab.active { background: var(--color-background-primary); color: var(--color-text-primary); font-weight: 500; border: 0.5px solid var(--color-border-tertiary); }
+.tab:hover:not(.active) { color: var(--color-text-primary); }
+
+.filters-bar { padding: 10px 16px; border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; flex-shrink: 0; background: var(--color-background-primary); }
+.search-wrap { position: relative; flex: 1; min-width: 180px; max-width: 260px; }
+.search-wrap input { width: 100%; padding: 6px 10px 6px 30px; font-size: 13px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-primary); outline: none; }
+.search-wrap input:focus { border-color: var(--color-border-primary); }
+.search-icon { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--color-text-tertiary); pointer-events: none; }
+select { padding: 6px 10px; font-size: 13px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-primary); cursor: pointer; outline: none; }
+.count-badge { margin-left: auto; font-size: 12px; color: var(--color-text-secondary); }
+
+
+
+.stats-bar { display: flex; gap: 8px; padding: 10px 16px; border-bottom: 0.5px solid var(--color-border-tertiary); flex-shrink: 0; flex-wrap: wrap; background: var(--color-background-primary); }
+.stat-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 8px 14px; display: flex; flex-direction: column; gap: 2px; min-width: 90px; }
+.stat-label { font-size: 11px; color: var(--color-text-secondary); }
+.stat-val { font-size: 18px; font-weight: 500; }
+
+.content-area { flex: 1; display: flex; overflow: hidden; }
+.table-wrap { flex: 1; overflow: auto; background: var(--color-background-primary); }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th { padding: 8px 12px; text-align: left; font-weight: 500; font-size: 12px; color: var(--color-text-secondary); background: var(--color-background-secondary); border-bottom: 0.5px solid var(--color-border-tertiary); white-space: nowrap; position: sticky; top: 0; z-index: 1; }
+tbody tr { border-bottom: 0.5px solid var(--color-border-tertiary); cursor: pointer; transition: background 0.1s; }
+tbody tr:hover { background: var(--color-background-secondary); }
+tbody tr.selected { background: var(--color-background-info); }
+td { padding: 9px 12px; vertical-align: middle; }
+td.nowrap { white-space: nowrap; }
+
+.badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+.badge-success { background: var(--color-background-success); color: var(--color-text-success); }
+.badge-danger { background: var(--color-background-danger); color: var(--color-text-danger); }
+.badge-warning { background: var(--color-background-warning); color: var(--color-text-warning); }
+.badge-info { background: var(--color-background-info); color: var(--color-text-info); }
+.badge-neutral { background: var(--color-background-secondary); color: var(--color-text-secondary); }
+
+.cat-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; flex-shrink: 0; }
+.cat-security { background: #7F77DD; }
+.cat-cards { background: #1D9E75; }
+.cat-limits { background: #BA7517; }
+.cat-payments { background: #378ADD; }
+.cat-comms { background: #D4537E; }
+.cat-account { background: #888780; }
+
+.initiator-label { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--color-text-secondary); }
+
+.detail-panel { width: 340px; flex-shrink: 0; border-left: 0.5px solid var(--color-border-tertiary); display: flex; flex-direction: column; overflow: hidden; transition: width 0.2s; background: var(--color-background-primary); }
+.detail-panel.hidden { width: 0; overflow: hidden; border: none; }
+.detail-header { padding: 14px 16px; border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; align-items: flex-start; gap: 8px; flex-shrink: 0; }
+.detail-close { margin-left: auto; cursor: pointer; padding: 2px; color: var(--color-text-tertiary); flex-shrink: 0; font-size: 18px; line-height: 1; background: none; border: none; }
+.detail-title { font-size: 14px; font-weight: 500; }
+.detail-subtitle { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+.detail-body { flex: 1; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 14px; }
+
+.detail-section-title { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); margin-bottom: 8px; }
+.kv-row { display: flex; gap: 8px; margin-bottom: 6px; }
+.kv-key { font-size: 12px; color: var(--color-text-secondary); flex: 0 0 110px; padding-top: 1px; }
+.kv-val { font-size: 13px; color: var(--color-text-primary); flex: 1; word-break: break-all; }
+.detail-section { border-top: 0.5px solid var(--color-border-tertiary); padding-top: 12px; }
+
+.related-item { display: flex; align-items: flex-start; gap: 8px; padding: 7px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.related-item:last-child { border-bottom: none; }
+.related-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-border-secondary); margin-top: 5px; flex-shrink: 0; }
+.related-text { font-size: 12px; }
+.related-time { font-size: 11px; color: var(--color-text-tertiary); margin-top: 2px; }
+
+.json-block { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px; font-family: var(--font-mono); font-size: 11px; color: var(--color-text-secondary); overflow-x: auto; white-space: pre; line-height: 1.5; border: 0.5px solid var(--color-border-tertiary); }
+
+.empty-state { padding: 48px 16px; text-align: center; color: var(--color-text-secondary); }
+.empty-title { font-size: 15px; font-weight: 500; margin-bottom: 6px; color: var(--color-text-primary); }
+</style>
+</head>
+<body>
+<div class="layout">
+  <div class="main">
+    <div class="topbar">
+      <div class="client-info">
+        <div class="avatar">ПС</div>
+        <div>
+          <div class="client-name">Петренко Святослав Ігорович</div>
+          <div class="client-meta">ID: CLT-00482194 · +380 98 123 45 67 · INN: 3456789012</div>
+        </div>
+      </div>
+      <div class="tabs">
+        <div class="tab">Профіль</div>
+        <div class="tab">Рахунки</div>
+        <div class="tab">Картки</div>
+        <div class="tab active">Події</div>
+        <div class="tab">Заявки</div>
+        <div class="tab">Ліміти</div>
+      </div>
+    </div>
+
+    <div class="filters-bar">
+      <select id="catSelect">
+        <option value="all">Усі категорії</option>
+        <option value="security">Безпека</option>
+        <option value="cards">Картки</option>
+        <option value="payments">Платежі</option>
+        <option value="limits">Ліміти</option>
+        <option value="comms">Комунікації</option>
+        <option value="account">Обліковий запис</option>
+      </select>
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="7" cy="7" r="4.5"/><line x1="10.5" y1="10.5" x2="14" y2="14"/>
+        </svg>
+        <input id="searchInput" type="text" placeholder="ID події, телефон, transaction ID...">
+      </div>
+      <select id="periodSelect">
+        <option value="all">Будь-який період</option>
+        <option value="today">Сьогодні</option>
+        <option value="7d" selected>7 днів</option>
+        <option value="30d">30 днів</option>
+      </select>
+      <select id="statusSelect">
+        <option value="all">Усі статуси</option>
+        <option value="success">Успішно</option>
+        <option value="error">Неуспішно</option>
+        <option value="pending">В процесі</option>
+        <option value="canceled">Скасовано</option>
+      </select>
+      <select id="initiatorSelect">
+        <option value="all">Усі ініціатори</option>
+        <option value="client">Клієнт</option>
+        <option value="employee">Співробітник</option>
+        <option value="system">Система</option>
+      </select>
+      <span class="count-badge" id="countBadge">Завантаження...</span>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat-card"><div class="stat-label">Всього подій</div><div class="stat-val" id="s-total">-</div></div>
+      <div class="stat-card"><div class="stat-label">Успішно</div><div class="stat-val" style="color:var(--color-text-success)" id="s-success">-</div></div>
+      <div class="stat-card"><div class="stat-label">Помилки</div><div class="stat-val" style="color:var(--color-text-danger)" id="s-errors">-</div></div>
+      <div class="stat-card"><div class="stat-label">В процесі</div><div class="stat-val" style="color:var(--color-text-warning)" id="s-pending">-</div></div>
+    </div>
+
+    <div class="content-area">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Дата та час</th>
+              <th>Категорія</th>
+              <th>Тип події</th>
+              <th>Опис</th>
+              <th>Ініціатор</th>
+              <th>Канал</th>
+              <th>Статус</th>
+            </tr>
+          </thead>
+          <tbody id="eventsBody"></tbody>
+        </table>
+        <div class="empty-state" id="emptyState" style="display:none">
+          <div class="empty-title">Подій не знайдено</div>
+          <div>Спробуйте змінити фільтри</div>
+        </div>
+      </div>
+
+      <div class="detail-panel hidden" id="detailPanel">
+        <div class="detail-header">
+          <div>
+            <div class="detail-title" id="d-title">—</div>
+            <div class="detail-subtitle" id="d-subtitle">—</div>
+          </div>
+          <button class="detail-close" id="detailClose">×</button>
+        </div>
+        <div class="detail-body" id="detailBody"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CATS = {
+  security: { label: 'Безпека', cls: 'cat-security' },
+  cards: { label: 'Картки', cls: 'cat-cards' },
+  limits: { label: 'Ліміти', cls: 'cat-limits' },
+  payments: { label: 'Платежі', cls: 'cat-payments' },
+  comms: { label: 'Комунікації', cls: 'cat-comms' },
+  account: { label: 'Обліковий запис', cls: 'cat-account' }
+};
+
+const EVENTS = [
+  { id:'EVT-00001', ts:'17.03.2026 14:32:11', cat:'security', type:'Авторизація', desc:'Успішний вхід', initiator:'client', channel:'iOS', status:'success',
+    related:[{t:'Push-повідомлення надіслано',ts:'14:32:12'},{t:'Сесію відкрито',ts:'14:32:11'}],
+    fields:[['ID події','EVT-00001'],['Платформа','iOS 18.2'],['Версія додатку','4.12.1'],['Device ID','D-8A2F19C4'],['IP-адреса','93.175.12.44'],['Країна','UA'],['Спосіб входу','PIN'],['Trusted device','Так']],
+    json:'{\n  "event": "login_success",\n  "platform": "ios",\n  "app_version": "4.12.1",\n  "device_id": "D-8A2F19C4",\n  "ip": "93.175.12.44",\n  "login_method": "pin",\n  "trusted_device": true\n}' },
+
+  { id:'EVT-00002', ts:'17.03.2026 14:25:03', cat:'payments', type:'Платіж P2P', desc:'Переказ +380 67 987 65 43 · 500 UAH', initiator:'client', channel:'Android', status:'success',
+    related:[{t:'OTP підтверджено',ts:'14:24:58'},{t:'Push надіслано одержувачу',ts:'14:25:04'}],
+    fields:[['ID операції','TXN-4928571'],['Сума','500.00 UAH'],['Джерело','**** 4521'],['Одержувач','+380 67 987 65 43'],['Тип','Миттєвий платіж'],['OTP','Підтверджено']],
+    json:'{\n  "txn_id": "TXN-4928571",\n  "amount": 500.00,\n  "currency": "UAH",\n  "type": "p2p_instant",\n  "src_card": "4111xxxxxxxx4521",\n  "dst_phone": "+380679876543",\n  "otp_confirmed": true\n}' },
+
+  { id:'EVT-00003', ts:'17.03.2026 13:50:22', cat:'comms', type:'Push-сповіщення', desc:'Транзакційний push — зарахування 1200 UAH', initiator:'system', channel:'FCM', status:'success',
+    related:[{t:'Платіж TXN-4928570',ts:'13:50:21'}],
+    fields:[['Заголовок','Надходження на рахунок'],['Тип push','Транзакційний'],['Канал','FCM'],['Пристрій','Pixel 7'],['Token ID','fc9a…b12c'],['Доставлено','Так'],['Відкрито','Так']],
+    json:'{\n  "push_type": "transactional",\n  "title": "Надходження на рахунок",\n  "channel": "fcm",\n  "delivered": true,\n  "opened": true,\n  "deeplink": "/account/history"\n}' },
+
+  { id:'EVT-00004', ts:'17.03.2026 13:40:01', cat:'security', type:'Невдалий вхід', desc:'Неправильний PIN — спроба 2/3', initiator:'client', channel:'iOS', status:'error',
+    related:[{t:'Надіслано push-попередження',ts:'13:40:02'}],
+    fields:[['ID події','EVT-00004'],['Платформа','iOS 18.2'],['Причина','Невірний PIN'],['Спроба','2 з 3'],['IP-адреса','93.175.12.44'],['Device ID','D-8A2F19C4']],
+    json:'{\n  "event": "login_failed",\n  "reason": "wrong_pin",\n  "attempt": 2,\n  "max_attempts": 3,\n  "device_id": "D-8A2F19C4"\n}' },
+
+  { id:'EVT-00005', ts:'16.03.2026 17:11:45', cat:'limits', type:'Зміна ліміту СЕП', desc:'Добовий ліміт: 50 000 → 100 000 UAH', initiator:'employee', channel:'Admin panel', status:'success',
+    related:[{t:'Заявка KRQ-00123 закрита',ts:'17:11:40'}],
+    fields:[['Підтип','Добовий ліміт'],['Старе значення','50 000 UAH'],['Нове значення','100 000 UAH'],['Співробітник','Коваленко О.В.'],['Роль','Старший менеджер'],['Підстава','Заявка KRQ-00123'],['Коментар','Клієнт VIP, підтверджено']],
+    json:'{\n  "event": "sep_limit_change",\n  "subtype": "daily",\n  "old_value": 50000,\n  "new_value": 100000,\n  "currency": "UAH",\n  "employee_id": "EMP-00291",\n  "ticket": "KRQ-00123"\n}' },
+
+  { id:'EVT-00006', ts:'16.03.2026 15:02:30', cat:'cards', type:'Блокування картки', desc:'Картка **** 4521 заблокована', initiator:'client', channel:'iOS', status:'success',
+    related:[{t:'Push про блокування',ts:'15:02:31'},{t:'SMS надіслано',ts:'15:02:33'}],
+    fields:[['Картка','**** 4521'],['Причина','Тимчасове блокування'],['Ініціатор','Клієнт'],['Підтверджено','OTP'],['Канал','iOS 18.2']],
+    json:'{\n  "event": "card_block",\n  "card_last4": "4521",\n  "reason": "temporary",\n  "confirmed_by": "otp",\n  "channel": "mobile_ios"\n}' },
+
+  { id:'EVT-00007', ts:'16.03.2026 10:22:08', cat:'limits', type:'Ліміти ФМ/IIO', desc:'Фінмоніторинг: накладено обмеження', initiator:'system', channel:'FM System', status:'pending',
+    related:[{t:'Повідомлення ФМ отримано',ts:'10:22:05'},{t:'Кейс FMC-00889 створено',ts:'10:22:09'}],
+    fields:[['Тип обмеження','Дебетові операції'],['Значення','0 UAH / добу'],['Джерело','FM System'],['Статус','Активний'],['Дата початку','16.03.2026'],['Постанова','№ 2024-FM-1102'],['Кейс','FMC-00889']],
+    json:'{\n  "event": "fm_limit_applied",\n  "limit_type": "debit_daily",\n  "value": 0,\n  "source": "fm_system",\n  "resolution": "2024-FM-1102",\n  "case_id": "FMC-00889",\n  "status": "active"\n}' },
+
+  { id:'EVT-00008', ts:'15.03.2026 20:05:14', cat:'payments', type:'Неуспішний платіж', desc:'IBAN переказ — timeout шлюзу', initiator:'client', channel:'Android', status:'error',
+    related:[{t:'Спроба 2 — також timeout',ts:'20:05:44'},{t:'Push про помилку',ts:'20:05:45'}],
+    fields:[['Підтип','Переказ по IBAN'],['Сума','2 400.00 UAH'],['Одержувач','UA21 3052 9900 0002 6000…'],['Код помилки','GW_TIMEOUT'],['Повідомлення','Шлюз не відповів вчасно'],['Кількість спроб','2'],['Operation ID','OP-00399124']],
+    json:'{\n  "event": "payment_failed",\n  "type": "iban_transfer",\n  "amount": 2400.00,\n  "error_code": "GW_TIMEOUT",\n  "retries": 2,\n  "operation_id": "OP-00399124"\n}' },
+
+  { id:'EVT-00009', ts:'15.03.2026 18:33:50', cat:'comms', type:'Дожим клієнта', desc:'Кредитний оффер — SMS + Push', initiator:'system', channel:'CRM Campaign', status:'pending',
+    related:[],
+    fields:[['Кампанія','SPRING_CREDIT_2026'],['Канал','SMS, Push'],['Продукт','Кредит готівкою до 100 000 UAH'],['Статус','Доставлено, не відкрито'],['Менеджер','Автоматично']],
+    json:'{\n  "event": "crm_campaign",\n  "campaign_id": "SPRING_CREDIT_2026",\n  "channels": ["sms","push"],\n  "product": "cash_loan",\n  "status": "delivered_not_opened"\n}' },
+
+  { id:'EVT-00010', ts:'15.03.2026 09:00:00', cat:'security', type:'Скидання паролю', desc:'Пароль скинуто через КЦ', initiator:'employee', channel:'Admin panel', status:'success',
+    related:[{t:'SMS підтвердження клієнту',ts:'09:00:02'}],
+    fields:[['Ініціатор','Іваненко П.О. (КЦ)'],['Спосіб','OTP по телефону'],['Причина','Забув пароль'],['Дзвінок','CC-00481'],['Статус','Виконано']],
+    json:'{\n  "event": "password_reset",\n  "initiated_by": "employee",\n  "employee_id": "EMP-00147",\n  "method": "phone_otp",\n  "call_id": "CC-00481",\n  "status": "success"\n}' },
+
+  { id:'EVT-00011', ts:'14.03.2026 22:14:05', cat:'payments', type:'Активна операція', desc:'Платіж ЖКГ — очікує підтвердження', initiator:'client', channel:'iOS', status:'pending',
+    related:[],
+    fields:[['Підтип','Комунальні послуги'],['Постачальник','Дніпро Газ'],['Сума','823.40 UAH'],['Статус процесу','Очікує OTP'],['Створено','14.03.2026 22:13:55'],['TTL','10 хвилин']],
+    json:'{\n  "event": "payment_active",\n  "type": "utility",\n  "provider": "dnipro_gaz",\n  "amount": 823.40,\n  "status": "awaiting_otp",\n  "ttl_sec": 600\n}' },
+
+  { id:'EVT-00012', ts:'14.03.2026 11:05:00', cat:'account', type:"Прив'язка пристрою", desc:'Новий пристрій Samsung Galaxy S24', initiator:'client', channel:'Android', status:'success',
+    related:[{t:'Push-підтвердження надіслано',ts:'11:04:50'}],
+    fields:[['Пристрій','Samsung Galaxy S24'],['OS','Android 14'],['Device ID','D-C2E90AF1'],['Статус','Підтверджено'],['Тип дії',"Прив'язка нового пристрою"]],
+    json:'{\n  "event": "device_bind",\n  "device_name": "Samsung Galaxy S24",\n  "os": "android_14",\n  "device_id": "D-C2E90AF1",\n  "confirmed": true\n}' },
+
+  { id:'EVT-00013', ts:'14.03.2026 10:45:00', cat:'cards', type:'Зміна країни', desc:'Країни картки **** 4521: UA → UA, PL, DE', initiator:'client', channel:'iOS', status:'success',
+    related:[],
+    fields:[['Картка','**** 4521'],['Попередні країни','UA'],['Нові країни','UA, PL, DE'],['Ініціатор','Клієнт'],['Канал','iOS']],
+    json:'{\n  "event": "card_countries_change",\n  "card_last4": "4521",\n  "old_countries": ["UA"],\n  "new_countries": ["UA","PL","DE"]\n}' },
+];
+
+let selectedCat = 'all';
+let selectedRow = null;
+let searchVal = '';
+let statusVal = 'all';
+let initiatorVal = 'all';
+
+function statusBadge(s) {
+  if(s==='success') return '<span class="badge badge-success">Успішно</span>';
+  if(s==='error') return '<span class="badge badge-danger">Помилка</span>';
+  if(s==='pending') return '<span class="badge badge-warning">В процесі</span>';
+  if(s==='canceled') return '<span class="badge badge-neutral">Скасовано</span>';
+  return '';
+}
+function initiatorLabel(i) {
+  if(i==='client') return '<span class="initiator-label">Клієнт</span>';
+  if(i==='employee') return '<span class="initiator-label">Співробітник</span>';
+  if(i==='system') return '<span class="initiator-label">Система</span>';
+  return i;
+}
+function getFiltered() {
+  return EVENTS.filter(e => {
+    if(selectedCat !== 'all' && e.cat !== selectedCat) return false;
+    if(statusVal !== 'all' && e.status !== statusVal) return false;
+    if(initiatorVal !== 'all' && e.initiator !== initiatorVal) return false;
+    if(searchVal && !e.id.toLowerCase().includes(searchVal) && !e.desc.toLowerCase().includes(searchVal) && !e.type.toLowerCase().includes(searchVal)) return false;
+    return true;
+  });
+}
+function render() {
+  const filtered = getFiltered();
+  const tbody = document.getElementById('eventsBody');
+  const empty = document.getElementById('emptyState');
+  document.getElementById('countBadge').textContent = filtered.length + ' подій';
+  document.getElementById('s-total').textContent = EVENTS.length;
+  document.getElementById('s-success').textContent = EVENTS.filter(e=>e.status==='success').length;
+  document.getElementById('s-errors').textContent = EVENTS.filter(e=>e.status==='error').length;
+  document.getElementById('s-pending').textContent = EVENTS.filter(e=>e.status==='pending').length;
+  if(filtered.length === 0) { tbody.innerHTML = ''; empty.style.display='block'; return; }
+  empty.style.display = 'none';
+  tbody.innerHTML = filtered.map(e => {
+    const cat = CATS[e.cat];
+    const sel = selectedRow && selectedRow.id === e.id ? 'selected' : '';
+    return `<tr class="${sel}" data-id="${e.id}">
+      <td class="nowrap" style="color:var(--color-text-secondary);font-size:12px">${e.ts}</td>
+      <td class="nowrap"><span class="cat-dot ${cat.cls}"></span>${cat.label}</td>
+      <td class="nowrap">${e.type}</td>
+      <td style="color:var(--color-text-secondary);font-size:12px;max-width:200px">${e.desc}</td>
+      <td class="nowrap">${initiatorLabel(e.initiator)}</td>
+      <td class="nowrap" style="font-size:12px;color:var(--color-text-secondary)">${e.channel}</td>
+      <td class="nowrap">${statusBadge(e.status)}</td>
+    </tr>`;
+  }).join('');
+  tbody.querySelectorAll('tr').forEach(tr => {
+    tr.addEventListener('click', () => {
+      const ev = EVENTS.find(e=>e.id===tr.dataset.id);
+      if(ev) openDetail(ev);
+    });
+  });
+}
+function openDetail(ev) {
+  selectedRow = ev;
+  render();
+  const panel = document.getElementById('detailPanel');
+  panel.classList.remove('hidden');
+  document.getElementById('d-title').textContent = ev.type;
+  document.getElementById('d-subtitle').textContent = ev.id + ' · ' + ev.ts;
+  const cat = CATS[ev.cat];
+  let html = `<div>
+    <div class="detail-section-title">Загальні поля</div>
+    <div class="kv-row"><div class="kv-key">Статус</div><div class="kv-val">${statusBadge(ev.status)}</div></div>
+    <div class="kv-row"><div class="kv-key">Категорія</div><div class="kv-val"><span class="cat-dot ${cat.cls}"></span>${cat.label}</div></div>
+    <div class="kv-row"><div class="kv-key">Ініціатор</div><div class="kv-val">${initiatorLabel(ev.initiator)}</div></div>
+    <div class="kv-row"><div class="kv-key">Канал</div><div class="kv-val">${ev.channel}</div></div>
+  </div>`;
+  html += `<div class="detail-section">
+    <div class="detail-section-title">Деталі події</div>
+    ${ev.fields.map(([k,v])=>`<div class="kv-row"><div class="kv-key">${k}</div><div class="kv-val">${v}</div></div>`).join('')}
+  </div>`;
+  if(ev.related && ev.related.length) {
+    html += `<div class="detail-section">
+      <div class="detail-section-title">Пов'язані події</div>
+      ${ev.related.map(r=>`<div class="related-item"><div class="related-dot"></div><div><div class="related-text">${r.t}</div><div class="related-time">${r.ts}</div></div></div>`).join('')}
+    </div>`;
+  }
+  html += `<div class="detail-section">
+    <div class="detail-section-title">JSON payload</div>
+    <div class="json-block">${ev.json}</div>
+  </div>`;
+  document.getElementById('detailBody').innerHTML = html;
+}
+document.getElementById('detailClose').addEventListener('click', () => {
+  document.getElementById('detailPanel').classList.add('hidden');
+  selectedRow = null;
+  render();
+});
+document.getElementById('catSelect').addEventListener('change', e => { selectedCat = e.target.value; selectedRow = null; document.getElementById('detailPanel').classList.add('hidden'); render(); });
+document.getElementById('searchInput').addEventListener('input', e => { searchVal = e.target.value.toLowerCase(); render(); });
+document.getElementById('statusSelect').addEventListener('change', e => { statusVal = e.target.value; render(); });
+document.getElementById('initiatorSelect').addEventListener('change', e => { initiatorVal = e.target.value; render(); });
+render();
+</script>
+</body>
+</html>
